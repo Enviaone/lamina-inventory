@@ -1,24 +1,27 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { RootLayout } from '@/layouts/root-layout';
-import { DashboardPage } from '@/pages/dashboard-page';
+import { Suspense } from 'react';
+import { RouterProvider } from 'react-router-dom';
+import { Toaster } from 'sonner';
 
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <RootLayout />,
-    children: [
-      {
-        index: true,
-        element: <DashboardPage />,
-      },
-      {
-        path: 'inventory',
-        element: <div>Inventory Page (Coming Soon)</div>,
-      },
-    ],
-  },
-]);
+import { Spinner } from '@/components/ui/spinner';
+import router from './render-routes';
 
-export function AppRouter() {
-  return <RouterProvider router={router} />;
-}
+// Loading fallback component
+const pageLoader = (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="flex flex-col items-center gap-4">
+      <Spinner className="h-8 w-8" />
+      <p className="text-sm text-muted-foreground">Loading...</p>
+    </div>
+  </div>
+);
+
+const Routes = () => {
+  return (
+    <Suspense fallback={pageLoader}>
+      <RouterProvider router={router} />
+      <Toaster position="bottom-right" />
+    </Suspense>
+  );
+};
+
+export default Routes;
