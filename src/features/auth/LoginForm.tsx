@@ -5,7 +5,6 @@ import { ArrowLeft, ChevronDown, Mail, Smartphone, Zap } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   InputOTP,
   InputOTPGroup,
@@ -23,6 +22,18 @@ import {
 import { useAuthStore } from '@/store/auth-store';
 import { MOCK_CREDENTIALS } from '@/constants/mock-credentials';
 import type { UserRole } from '@/types/auth';
+import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  emailLoginSchema,
+  otpLoginSchema,
+  phoneLoginSchema,
+  type EmailLoginSchema,
+  type OtpLoginSchema,
+  type PhoneLoginSchema,
+} from '@/schema/login.schema';
+import { Form } from '@/components/ui/form';
+import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 
 type LoginMode = 'email' | 'phone' | 'otp';
 
@@ -30,20 +41,38 @@ export function LoginForm() {
   const navigate = useNavigate();
   const { login } = useAuthStore();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState('');
   const [mode, setMode] = useState<LoginMode>('email');
+  const [otp, setOtp] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
 
-  const handleEmailSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const form = useForm<EmailLoginSchema>({
+    resolver: zodResolver(emailLoginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  const phoneForm = useForm<PhoneLoginSchema>({
+    resolver: zodResolver(phoneLoginSchema),
+    defaultValues: {
+      phone: '',
+    },
+  });
+
+  const otpForm = useForm<OtpLoginSchema>({
+    resolver: zodResolver(otpLoginSchema),
+    defaultValues: {
+      otp: '',
+    },
+  });
+
+  const handleEmailSubmit = async (data: EmailLoginSchema) => {
     setIsLoading(true);
     await new Promise((r) => setTimeout(r, 400)); // simulate latency
 
-    const result = login(email, password);
+    const result = login(data.email, data.password);
     setIsLoading(false);
 
     if (!result.success) {
@@ -54,13 +83,12 @@ export function LoginForm() {
     navigate('/', { replace: true });
   };
 
-  const handleSendOtp = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (phone.length >= 10) setMode('otp');
+  const handleSendOtp = (data: PhoneLoginSchema) => {
+    if (data.phone.length >= 10) setMode('otp');
   };
 
-  const handleVerifyOtp = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleVerifyOtp = (data: OtpLoginSchema) => {
+    console.log(data);
     // TODO: wire real OTP verification
     toast.info('OTP verification is not yet connected.');
   };
@@ -68,8 +96,8 @@ export function LoginForm() {
   const handleQuickLogin = (role: UserRole) => {
     const cred = MOCK_CREDENTIALS.find((c) => c.stage === role);
     if (!cred) return;
-    setEmail(cred.email);
-    setPassword(cred.password);
+    form.setValue('email', cred.email);
+    form.setValue('password', cred.password);
     setMode('email');
     setSelectedRole(cred.stageName);
     toast.info(
@@ -91,12 +119,13 @@ export function LoginForm() {
           {mode === 'otp' && (
             <>
               We sent a 6-digit code to{' '}
-              <span className="font-medium text-foreground">{phone}</span>
+              <span className="font-medium text-foreground">
+                {phoneForm.getValues().phone}
+              </span>
             </>
           )}
         </p>
       </div>
-
       {/* ── Dev Quick Login ── */}
       <div className="rounded-lg border border-dashed border-amber-300 bg-amber-50 p-3">
         <div className="flex items-center justify-between gap-2">
@@ -145,7 +174,6 @@ export function LoginForm() {
           </DropdownMenu>
         </div>
       </div>
-
       {/* ── Login method tabs ── */}
       {mode !== 'otp' && (
         <div className="flex gap-1 rounded-lg bg-muted p-1">
@@ -175,149 +203,167 @@ export function LoginForm() {
           </button>
         </div>
       )}
-
-      {/* ── Email form ── */}
       {mode === 'email' && (
-        <form onSubmit={handleEmailSubmit} className="space-y-5">
-          <div className="space-y-2">
-            <Label
-              htmlFor="email"
-              className="text-sm font-medium text-foreground"
-            >
-              Email address
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="name@lamina.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="h-11"
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label
-                htmlFor="password"
-                className="text-sm font-medium text-foreground"
-              >
-                Password
-              </Label>
-              <a
-                href="#"
-                className="text-xs font-medium text-primary hover:text-primary/80 transition-colors"
-              >
-                Forgot password?
-              </a>
-            </div>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="h-11"
-              required
-            />
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full h-11 font-semibold"
-            size="lg"
-            disabled={isLoading}
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(handleEmailSubmit)}
+            className="space-y-5"
           >
-            {isLoading ? 'Signing in...' : 'Sign in'}
-          </Button>
-        </form>
+            <Controller
+              name="email"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field className="gap-2" data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="email" className="text-gray-800">
+                    Email
+                  </FieldLabel>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    aria-invalid={fieldState.invalid}
+                    {...field}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+
+            <Controller
+              name="password"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field className="gap-2" data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="password" className="text-gray-800">
+                    Password
+                  </FieldLabel>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    aria-invalid={fieldState.invalid}
+                    {...field}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+
+            <Button
+              className="w-full h-11 font-semibold"
+              size="lg"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Signing in...' : 'Sign in'}
+            </Button>
+          </form>
+        </Form>
       )}
 
-      {/* ── Phone form ── */}
       {mode === 'phone' && (
-        <form onSubmit={handleSendOtp} className="space-y-5">
-          <div className="space-y-2">
-            <Label
-              htmlFor="phone"
-              className="text-sm font-medium text-foreground"
-            >
-              Phone number
-            </Label>
-            <Input
-              id="phone"
-              type="tel"
-              placeholder="+91 98765 43210"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="h-11"
+        <Form {...phoneForm}>
+          <form
+            onSubmit={phoneForm.handleSubmit(handleSendOtp)}
+            className="space-y-5"
+          >
+            <Controller
+              name="phone"
+              control={phoneForm.control}
+              render={({ field, fieldState }) => (
+                <Field className="gap-2" data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="phone" className="text-gray-800">
+                    Phone number
+                  </FieldLabel>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="Enter your phone number"
+                    aria-invalid={fieldState.invalid}
+                    {...field}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    We'll send you a one-time verification code via WhatsApp
+                  </p>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
             />
-            <p className="text-xs text-muted-foreground">
-              We'll send you a one-time verification code via SMS
-            </p>
-          </div>
-          <Button type="submit" className="w-full h-11 font-semibold" size="lg">
-            Send verification code
-          </Button>
-        </form>
+
+            <Button className="w-full h-11 font-semibold" size="lg">
+              Send verification code
+            </Button>
+          </form>
+        </Form>
       )}
 
-      {/* ── OTP form ── */}
       {mode === 'otp' && (
-        <form onSubmit={handleVerifyOtp} className="space-y-5">
-          <div className="space-y-3">
-            <Label className="text-sm font-medium text-foreground">
-              Enter OTP
-            </Label>
-            <div className="flex w-full">
-              <InputOTP
-                maxLength={6}
-                value={otp}
-                onChange={setOtp}
-                containerClassName="w-full"
-              >
-                <InputOTPGroup className="w-full">
-                  <InputOTPSlot index={0} className="flex-1 h-12" />
-                  <InputOTPSlot index={1} className="flex-1 h-12" />
-                  <InputOTPSlot index={2} className="flex-1 h-12" />
-                  <InputOTPSlot index={3} className="flex-1 h-12" />
-                  <InputOTPSlot index={4} className="flex-1 h-12" />
-                  <InputOTPSlot index={5} className="flex-1 h-12" />
-                </InputOTPGroup>
-              </InputOTP>
-            </div>
-            <p className="text-xs text-center text-muted-foreground">
-              Didn't receive the code?{' '}
-              <button
-                type="button"
-                className="font-medium text-primary hover:text-primary/80 transition-colors"
-              >
-                Resend
-              </button>
-            </p>
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full h-11 font-semibold"
-            size="lg"
-            disabled={otp.length < 6}
+        <Form {...otpForm}>
+          <form
+            onSubmit={otpForm.handleSubmit(handleVerifyOtp)}
+            className="space-y-5"
           >
-            Verify &amp; sign in
-          </Button>
+            <Controller
+              name="otp"
+              control={otpForm.control}
+              render={({ field, fieldState }) => (
+                <Field className="gap-2">
+                  <FieldLabel htmlFor="otp">
+                    OTP <span className="text-destructive">*</span>
+                  </FieldLabel>
 
-          <button
-            type="button"
-            onClick={() => {
-              setMode('phone');
-              setOtp('');
-            }}
-            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mx-auto"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            Back to phone number
-          </button>
-        </form>
+                  <InputOTP
+                    maxLength={6}
+                    containerClassName="w-full"
+                    {...field}
+                    onChange={(val) => {
+                      field.onChange(val);
+                      setOtp(val);
+                    }}
+                  >
+                    <InputOTPGroup className="w-full">
+                      <InputOTPSlot index={0} className="flex-1 h-12" />
+                      <InputOTPSlot index={1} className="flex-1 h-12" />
+                      <InputOTPSlot index={2} className="flex-1 h-12" />
+                      <InputOTPSlot index={3} className="flex-1 h-12" />
+                      <InputOTPSlot index={4} className="flex-1 h-12" />
+                      <InputOTPSlot index={5} className="flex-1 h-12" />
+                    </InputOTPGroup>
+                  </InputOTP>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+
+            <Button
+              type="submit"
+              className="w-full h-11 font-semibold"
+              size="lg"
+              disabled={otp.length < 6}
+            >
+              Verify &amp; sign in
+            </Button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setMode('phone');
+                setOtp('');
+              }}
+              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mx-auto"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              Back to phone number
+            </button>
+          </form>
+        </Form>
       )}
     </div>
   );

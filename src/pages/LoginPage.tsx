@@ -1,7 +1,7 @@
 import InventoryIllustration from '@/components/InventoryIllustration';
 import { LoginForm } from '@/features/auth/LoginForm';
 
-export default function Login() {
+export default function LoginPage() {
   return (
     <div className="flex min-h-screen">
       {/* Left side — Illustration */}
@@ -11,7 +11,7 @@ export default function Login() {
           <InventoryIllustration />
 
           {/* Add Powered by EnviaOne */}
-          <span className="absolute bottom-0 left-4 text-xs text-muted-foreground">
+          <span className="absolute bottom-0 right-0 text-xs text-muted-foreground">
             Powered by EnviaOne
           </span>
         </div>
@@ -19,7 +19,9 @@ export default function Login() {
 
       {/* Right side — Form */}
       <div className="flex flex-1 items-center justify-center px-6 py-12 lg:px-12">
-        <LoginForm />
+        <div className="border border-gray-200 rounded-lg p-6 w-full max-w-md space-y-8">
+          <LoginForm />
+        </div>
       </div>
     </div>
   );
