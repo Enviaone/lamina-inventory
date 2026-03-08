@@ -1,46 +1,88 @@
-import { type LucideIcon } from 'lucide-react';
-
+import { ChevronRight } from 'lucide-react';
+import { NavLink, useLocation } from 'react-router-dom';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import {
   SidebarGroup,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
-import { NavLink, useLocation } from 'react-router-dom';
+import type { NavItem } from '@/constants/nav-items';
 
-export function NavMain({
-  items,
-}: {
-  items: {
-    title: string;
-    url: string;
-    icon: LucideIcon;
-    isActive?: boolean;
-    items?: {
-      title: string;
-      url: string;
-    }[];
-  }[];
-}) {
+export function NavMain({ items }: { items: NavItem[] }) {
   const location = useLocation();
+
   return (
     <SidebarGroup>
       <SidebarMenu>
-        {items.map((item) => (
-          <SidebarMenuItem key={item.title}>
-            <SidebarMenuButton
-              asChild
-              tooltip={item.title}
-              isActive={location.pathname === item.url}
-              className="h-10"
+        {items.map((item) =>
+          item.children && item.children.length > 0 ? (
+            // ── Collapsible group ──────────────────────────────────────
+            <Collapsible
+              key={item.title}
+              defaultOpen={item.children.some((c) =>
+                location.pathname.startsWith(c.url),
+              )}
+              className="group/collapsible"
             >
-              <NavLink to={item.url} viewTransition prefetch="render">
-                <item.icon />
-                <span>{item.title}</span>
-              </NavLink>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        ))}
+              <SidebarMenuItem>
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuButton
+                    tooltip={item.title}
+                    className="h-10"
+                    isActive={item.children.some((c) =>
+                      location.pathname.startsWith(c.url),
+                    )}
+                  >
+                    <item.icon className="shrink-0" />
+                    <span className="flex-1 truncate">{item.title}</span>
+                    <ChevronRight className="ml-auto h-4 w-4 shrink-0 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                  </SidebarMenuButton>
+                </CollapsibleTrigger>
+
+                <CollapsibleContent>
+                  <SidebarMenuSub>
+                    {item.children.map((child) => (
+                      <SidebarMenuSubItem key={child.title}>
+                        <SidebarMenuSubButton
+                          asChild
+                          isActive={location.pathname.startsWith(child.url)}
+                        >
+                          <NavLink to={child.url} viewTransition>
+                            <child.icon className="shrink-0" />
+                            <span>{child.title}</span>
+                          </NavLink>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    ))}
+                  </SidebarMenuSub>
+                </CollapsibleContent>
+              </SidebarMenuItem>
+            </Collapsible>
+          ) : (
+            // ── Flat item ──────────────────────────────────────────────
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton
+                asChild
+                tooltip={item.title}
+                isActive={location.pathname.startsWith(item.url)}
+                className="h-10"
+              >
+                <NavLink to={item.url} viewTransition>
+                  <item.icon className="shrink-0" />
+                  <span>{item.title}</span>
+                </NavLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ),
+        )}
       </SidebarMenu>
     </SidebarGroup>
   );

@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { LayoutDashboard, PackageIcon } from 'lucide-react';
+import { PackageIcon } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
 
 import { NavMain } from '@/components/sidebar/nav-main';
 import { NavUser } from '@/components/sidebar/nav-user';
@@ -13,30 +14,21 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '@/components/ui/sidebar';
-import { NavLink } from 'react-router-dom';
-
-// This is sample data.
-const data = {
-  user: {
-    name: 'Dhanush R',
-    email: 'dhanush@gmail.com',
-    avatar: '/avatars/shadcn.jpg',
-  },
-  navMain: [
-    {
-      title: 'Dashboard',
-      url: '/dashboard',
-      icon: LayoutDashboard,
-    },
-    {
-      title: 'Brands',
-      url: '/brands',
-      icon: PackageIcon,
-    },
-  ],
-};
+import { useAuthStore } from '@/store/auth-store';
+import { getNavItemsForRoles } from '@/constants/nav-items';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user } = useAuthStore();
+
+  const navItems = user ? getNavItemsForRoles(user.roles ?? [user.role]) : [];
+
+  const sidebarUser = {
+    name: user?.name ?? 'Guest',
+    email: user?.email ?? '',
+    avatar: '',
+    role: user?.stageName ?? '',
+  };
+
   return (
     <Sidebar {...props}>
       <SidebarHeader className="p-3 sm:p-4 lg:p-5 pb-0">
@@ -48,19 +40,29 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <PackageIcon className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">Lumina Inventory</span>
+                  <span className="truncate font-semibold">
+                    Lamina Inventory
+                  </span>
+                  {user && (
+                    <span className="truncate text-xs text-sidebar-foreground/60">
+                      {user.stageName}
+                    </span>
+                  )}
                 </div>
               </NavLink>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navItems} />
       </SidebarContent>
+
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={sidebarUser} />
       </SidebarFooter>
+
       <SidebarRail />
     </Sidebar>
   );
