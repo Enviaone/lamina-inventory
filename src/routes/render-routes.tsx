@@ -4,7 +4,7 @@ import { RouteErrorBoundary } from '@/components/RouteErrorBoundary';
 import { lazyWithRetry } from '@/utils/lazyWithRetry';
 
 //! Lazy load all pages
-const Login = lazyWithRetry(() => import('@/pages/Login'));
+const Login = lazyWithRetry(() => import('@/pages/LoginPage'));
 const Dashboard = lazyWithRetry(() => import('@/pages/Dashboard'));
 const Brands = lazyWithRetry(() => import('@/pages/Brands'));
 const StagePage = lazyWithRetry(() => import('@/pages/StagePage'));
