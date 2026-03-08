@@ -7,7 +7,15 @@ import { lazyWithRetry } from '@/utils/lazyWithRetry';
 const Login = lazyWithRetry(() => import('@/pages/Login'));
 const Dashboard = lazyWithRetry(() => import('@/pages/Dashboard'));
 const Brands = lazyWithRetry(() => import('@/pages/Brands'));
+const StagePage = lazyWithRetry(() => import('@/pages/StagePage'));
 const NotFoundPage = lazyWithRetry(() => import('@/pages/NotFoundPage'));
+const BrandItemsPage = lazyWithRetry(() => import('@/pages/BrandItemsPage'));
+const LocationPage = lazyWithRetry(() => import('@/pages/LocationPage'));
+const LogPage = lazyWithRetry(() => import('@/pages/LogPage'));
+const UserManagementPage = lazyWithRetry(
+  () => import('@/pages/UserManagementPage'),
+);
+const ReportsPage = lazyWithRetry(() => import('@/pages/ReportsPage'));
 
 const router = createBrowserRouter([
   //? Public Routes
@@ -37,6 +45,30 @@ const router = createBrowserRouter([
       {
         path: '/brands',
         element: <Brands />,
+      },
+      {
+        path: '/brands/:brandId',
+        element: <BrandItemsPage />,
+      },
+      {
+        path: '/locations',
+        element: <LocationPage />,
+      },
+      {
+        path: '/stages/:stageSlug',
+        element: <StagePage />,
+      },
+      {
+        path: '/logs',
+        element: <LogPage />,
+      },
+      {
+        path: '/users',
+        element: <UserManagementPage />,
+      },
+      {
+        path: '/reports',
+        element: <ReportsPage />,
       },
     ],
   },

@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { Spinner } from '@/components/ui/spinner';
+import { useAuthStore } from '@/store/auth-store';
 
 interface ProtectedRouteProps {
   isProtected?: boolean;
@@ -10,10 +11,9 @@ const ProtectedRoute = ({
   isProtected = false,
   redirectPath = '/login',
 }: ProtectedRouteProps) => {
-  const isAuthenticated = false;
-  const isLoading = false;
+  const { isAuthenticated, user } = useAuthStore();
+  const isLoading = false; // replace with real loading state when wiring real auth
 
-  // Show loading spinner while checking auth status
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -30,12 +30,12 @@ const ProtectedRoute = ({
     return <Navigate to={redirectPath} replace />;
   }
 
-  // Redirect authenticated users from auth pages (login/register)
+  // Redirect authenticated users away from auth pages (e.g. /login)
   if (!isProtected && isAuthenticated) {
     return <Navigate to={redirectPath} replace />;
   }
 
-  return <Outlet />;
+  return <Outlet context={{ user }} />;
 };
 
 export default ProtectedRoute;
