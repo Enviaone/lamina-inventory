@@ -1,4 +1,8 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { ArrowLeft, ChevronDown, Mail, Smartphone, Zap } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,37 +11,75 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from '@/components/ui/input-otp';
-import { Mail, Smartphone, ArrowLeft } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+
+import { useAuthStore } from '@/store/auth-store';
+import { MOCK_CREDENTIALS } from '@/constants/mock-credentials';
+import type { UserRole } from '@/types/auth';
 
 type LoginMode = 'email' | 'phone' | 'otp';
 
 export function LoginForm() {
+  const navigate = useNavigate();
+  const { login } = useAuthStore();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [mode, setMode] = useState<LoginMode>('email');
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<string | null>(null);
 
-  const handleEmailSubmit = (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: wire up auth service
+    setIsLoading(true);
+    await new Promise((r) => setTimeout(r, 400)); // simulate latency
+
+    const result = login(email, password);
+    setIsLoading(false);
+
+    if (!result.success) {
+      toast.error(result.error ?? 'Login failed.');
+      return;
+    }
+    toast.success('Welcome back!');
+    navigate('/', { replace: true });
   };
 
   const handleSendOtp = (e: React.FormEvent) => {
     e.preventDefault();
-    if (phone.length >= 10) {
-      setMode('otp');
-    }
+    if (phone.length >= 10) setMode('otp');
   };
 
   const handleVerifyOtp = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: wire up OTP verification
+    // TODO: wire real OTP verification
+    toast.info('OTP verification is not yet connected.');
+  };
+
+  const handleQuickLogin = (role: UserRole) => {
+    const cred = MOCK_CREDENTIALS.find((c) => c.stage === role);
+    if (!cred) return;
+    setEmail(cred.email);
+    setPassword(cred.password);
+    setMode('email');
+    setSelectedRole(cred.stageName);
+    toast.info(
+      `Credentials filled for ${cred.stageName}. Click Sign in to continue.`,
+    );
   };
 
   return (
     <div className="w-full max-w-sm space-y-8">
-      {/* Header */}
+      {/* ── Header ── */}
       <div className="space-y-2">
         <h1 className="text-2xl font-bold tracking-tight text-foreground">
           {mode === 'otp' ? 'Verify your phone' : 'Welcome back'}
@@ -55,7 +97,56 @@ export function LoginForm() {
         </p>
       </div>
 
-      {/* Login method tabs */}
+      {/* ── Dev Quick Login ── */}
+      <div className="rounded-lg border border-dashed border-amber-300 bg-amber-50 p-3">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <Zap className="h-3.5 w-3.5 text-amber-600" />
+            <span className="text-xs font-semibold text-amber-700">
+              Dev Quick Login
+            </span>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 text-xs border-amber-300 text-amber-700 hover:bg-amber-100 gap-1 max-w-36 truncate"
+              >
+                <span className="truncate">
+                  {selectedRole ?? 'Select Role'}
+                </span>
+                <ChevronDown className="h-3 w-3 shrink-0" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="w-52 max-h-72 overflow-y-auto"
+            >
+              <DropdownMenuLabel className="text-xs text-muted-foreground">
+                Manufacturing Roles
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {MOCK_CREDENTIALS.map((cred) => (
+                <DropdownMenuItem
+                  key={cred.stage}
+                  className="gap-2 cursor-pointer text-sm"
+                  onClick={() => handleQuickLogin(cred.stage as UserRole)}
+                >
+                  <div className="flex flex-col">
+                    <span className="font-medium">{cred.stageName}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {cred.name}
+                    </span>
+                  </div>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
+      {/* ── Login method tabs ── */}
       {mode !== 'otp' && (
         <div className="flex gap-1 rounded-lg bg-muted p-1">
           <button
@@ -85,7 +176,7 @@ export function LoginForm() {
         </div>
       )}
 
-      {/* Email form */}
+      {/* ── Email form ── */}
       {mode === 'email' && (
         <form onSubmit={handleEmailSubmit} className="space-y-5">
           <div className="space-y-2">
@@ -98,10 +189,11 @@ export function LoginForm() {
             <Input
               id="email"
               type="email"
-              placeholder="name@company.com"
+              placeholder="name@lamina.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="h-11"
+              required
             />
           </div>
 
@@ -127,16 +219,22 @@ export function LoginForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="h-11"
+              required
             />
           </div>
 
-          <Button type="submit" className="w-full h-11 font-semibold" size="lg">
-            Sign in
+          <Button
+            type="submit"
+            className="w-full h-11 font-semibold"
+            size="lg"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Signing in...' : 'Sign in'}
           </Button>
         </form>
       )}
 
-      {/* Phone form */}
+      {/* ── Phone form ── */}
       {mode === 'phone' && (
         <form onSubmit={handleSendOtp} className="space-y-5">
           <div className="space-y-2">
@@ -149,7 +247,7 @@ export function LoginForm() {
             <Input
               id="phone"
               type="tel"
-              placeholder="+1 (555) 000-0000"
+              placeholder="+91 98765 43210"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               className="h-11"
@@ -158,14 +256,13 @@ export function LoginForm() {
               We'll send you a one-time verification code via SMS
             </p>
           </div>
-
           <Button type="submit" className="w-full h-11 font-semibold" size="lg">
             Send verification code
           </Button>
         </form>
       )}
 
-      {/* OTP verification form */}
+      {/* ── OTP form ── */}
       {mode === 'otp' && (
         <form onSubmit={handleVerifyOtp} className="space-y-5">
           <div className="space-y-3">
@@ -206,7 +303,7 @@ export function LoginForm() {
             size="lg"
             disabled={otp.length < 6}
           >
-            Verify & sign in
+            Verify &amp; sign in
           </Button>
 
           <button
