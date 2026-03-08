@@ -86,8 +86,8 @@ export default function LogPage() {
         <EditLogDialog
           key={editTarget?.id}
           entry={editTarget}
-          onOpenChange={(v) => !v && setEditTarget(null)}
-          onSave={(id, shift, data) => {
+          onOpenChange={(v: boolean) => !v && setEditTarget(null)}
+          onSave={(id: string, shift: string, data: LogEntry['data']) => {
             updateEntry(id, { shift, data });
             setEditTarget(null);
           }}
