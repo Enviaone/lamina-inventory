@@ -15,8 +15,8 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useLogStore, type LogEntry } from '@/store/log-store';
 import { useAuthStore } from '@/store/auth-store';
-import { LogCard } from '@/features/logs/components/LogCard';
 import { EditLogDialog } from '@/features/logs/components/EditLogDialog';
+import { LogCard } from '@/features/logs/components/LogCard';
 
 export default function LogPage() {
   const { logs, updateEntry, deleteEntry } = useLogStore();
