@@ -152,15 +152,16 @@ export default function UserManagementPage() {
 
       {/* Edit dialog */}
       <UserFormDialog
-        key={editTarget?.id}
         open={!!editTarget}
         onOpenChange={(v) => !v && setEditTarget(null)}
         initial={editTarget ?? undefined}
-        emailInUse={() => false}
         onSave={(data) => {
           if (editTarget) update(editTarget.id, data);
           setEditTarget(null);
         }}
+        emailInUse={(e) =>
+          users.some((u) => u.email === e && u.id !== editTarget?.id)
+        }
       />
 
       {/* Delete confirmation */}
