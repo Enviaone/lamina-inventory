@@ -4,7 +4,6 @@ import {
   PackageIcon,
   Flame,
   Wind,
-  ScanSearch,
   ArrowUpRight,
   Gauge,
   Cpu,
@@ -44,7 +43,7 @@ const users: NavItem     = { title: 'User Management', url: '/users',   icon: Us
 const ALL_STAGE_CHILDREN: NavChild[] = [
   { title: 'Melting',             url: '/stages/melting',             icon: Flame         },
   { title: 'Shot Blast',          url: '/stages/shot-blast',          icon: Wind          },
-  { title: 'Inspection',          url: '/stages/inspection',          icon: ScanSearch    },
+  // { title: 'Inspection',          url: '/stages/inspection',          icon: ScanSearch    },
   { title: 'Outward Transfer',    url: '/stages/outward-transfer',    icon: ArrowUpRight  },
   { title: 'Proof Machines',      url: '/stages/proof-machines',      icon: Gauge         },
   { title: 'CNC',                 url: '/stages/cnc',                 icon: Cpu           },
