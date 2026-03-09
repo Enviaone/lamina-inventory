@@ -5,10 +5,16 @@ import { PageHeader } from '@/components/shared/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { BrandCard } from '@/features/brands/components/BrandCard';
-import { MOCK_BRANDS } from '@/types/brand';
+import { MOCK_BRANDS, type Brand } from '@/types/brand';
+import { BrandFormDialog } from '@/features/brands/components/BrandFormDialog';
+import { type BrandFormSchema } from '@/schema/brand.schema';
+import { DeleteBrandDialog } from '@/features/brands/components/DeleteBrandDialog';
 
 export default function Brands() {
   const [search, setSearch] = useState('');
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editTarget, setEditTarget] = useState<Brand | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Brand | null>(null);
 
   const filtered = MOCK_BRANDS.filter(
     (b) =>
@@ -16,13 +22,38 @@ export default function Brands() {
       b.code.toLowerCase().includes(search.toLowerCase()),
   );
 
+  const handleSaveBrand = (data: BrandFormSchema) => {
+    // TODO: Wire to actual store or API
+    if (editTarget) {
+      console.log('Updated brand:', { ...data, id: editTarget.id });
+      setEditTarget(null);
+    } else {
+      console.log('Saved new brand:', data);
+    }
+    setIsDialogOpen(false);
+  };
+
+  const handleDeleteBrand = () => {
+    if (deleteTarget) {
+      // TODO: Wire to actual store or API
+      console.log('Deleted brand ID:', deleteTarget.id);
+      setDeleteTarget(null);
+    }
+  };
+
   return (
     <RootLayout>
       <PageHeader
         title="Manage Brands"
         description="Manage all the brands used in the factory. You can add new brands, edit existing ones, or delete them."
       >
-        <Button className="gap-2 shrink-0">
+        <Button
+          className="gap-2 shrink-0"
+          onClick={() => {
+            setEditTarget(null);
+            setIsDialogOpen(true);
+          }}
+        >
           <Plus className="w-4 h-4" />
           Add Brand
         </Button>
@@ -48,7 +79,12 @@ export default function Brands() {
       {filtered.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((brand) => (
-            <BrandCard key={brand.id} brand={brand} />
+            <BrandCard
+              key={brand.id}
+              brand={brand}
+              onEdit={(b) => setEditTarget(b)}
+              onDelete={(b) => setDeleteTarget(b)}
+            />
           ))}
         </div>
       ) : (
@@ -62,6 +98,28 @@ export default function Brands() {
           </p>
         </div>
       )}
+
+      {/* Dialog */}
+      <BrandFormDialog
+        open={isDialogOpen || !!editTarget}
+        onOpenChange={(v) => {
+          if (!v) {
+            setIsDialogOpen(false);
+            setEditTarget(null);
+          } else {
+            setIsDialogOpen(true);
+          }
+        }}
+        initial={editTarget || undefined}
+        onSave={handleSaveBrand}
+      />
+
+      {/* Delete Confirmation */}
+      <DeleteBrandDialog
+        brand={deleteTarget}
+        onOpenChange={(v) => !v && setDeleteTarget(null)}
+        onConfirm={handleDeleteBrand}
+      />
     </RootLayout>
   );
 }

@@ -16,9 +16,11 @@ import { type Brand } from '@/types/brand';
 
 interface BrandCardProps {
   brand: Brand;
+  onEdit: (brand: Brand) => void;
+  onDelete: (brand: Brand) => void;
 }
 
-export function BrandCard({ brand }: BrandCardProps) {
+export function BrandCard({ brand, onEdit, onDelete }: BrandCardProps) {
   const navigate = useNavigate();
   const colorKey: BrandColorKey =
     brand.color in BRAND_COLOR_MAP ? (brand.color as BrandColorKey) : 'blue';
@@ -57,11 +59,23 @@ export function BrandCard({ brand }: BrandCardProps) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-44">
-            <DropdownMenuItem className="gap-2 cursor-pointer">
+            <DropdownMenuItem
+              className="gap-2 cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(brand);
+              }}
+            >
               <Pencil className="w-4 h-4" /> Edit Brand
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 cursor-pointer text-destructive focus:text-destructive">
+            <DropdownMenuItem
+              className="gap-2 cursor-pointer text-destructive focus:text-destructive"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(brand);
+              }}
+            >
               <Trash2 className="w-4 h-4" /> Delete Brand
             </DropdownMenuItem>
           </DropdownMenuContent>
