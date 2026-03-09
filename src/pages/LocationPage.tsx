@@ -77,9 +77,8 @@ export default function LocationPage() {
         onSave={(name) => add(name)}
       />
 
-      {/* Edit dialog — key forces remount on each new target so useState re-initializes */}
+      {/* Edit dialog */}
       <LocationFormDialog
-        key={editTarget?.id}
         open={!!editTarget}
         onOpenChange={(v) => !v && setEditTarget(null)}
         initial={editTarget ?? undefined}
