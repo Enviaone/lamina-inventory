@@ -13,11 +13,19 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import type { NavItem } from '@/constants/nav-items';
 
 export function NavMain({ items }: { items: NavItem[] }) {
   const location = useLocation();
+  const { setOpenMobile, isMobile } = useSidebar();
+
+  const handleNavClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
 
   return (
     <SidebarGroup>
@@ -55,7 +63,11 @@ export function NavMain({ items }: { items: NavItem[] }) {
                           asChild
                           isActive={location.pathname.startsWith(child.url)}
                         >
-                          <NavLink to={child.url} viewTransition>
+                          <NavLink
+                            to={child.url}
+                            viewTransition
+                            onClick={handleNavClick}
+                          >
                             <child.icon className="shrink-0" />
                             <span>{child.title}</span>
                           </NavLink>
@@ -75,7 +87,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
                 isActive={location.pathname.startsWith(item.url)}
                 className="h-10"
               >
-                <NavLink to={item.url} viewTransition>
+                <NavLink to={item.url} viewTransition onClick={handleNavClick}>
                   <item.icon className="shrink-0" />
                   <span>{item.title}</span>
                 </NavLink>
