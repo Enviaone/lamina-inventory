@@ -76,7 +76,6 @@ export default function StagePage() {
 
   const stageId = stageSlug ? SLUG_TO_STAGE_ID[stageSlug] : undefined;
   const config = stageId ? STAGE_CONFIG[stageId] : undefined;
-  const isInwardReturn = stageId === 'INWARD_RETURN';
 
   // Default location name — pre-seeded into location fields for stages that have one
   const defaultLocationName = useLocationsStore(
@@ -106,30 +105,26 @@ export default function StagePage() {
   const rows = buildRows(selectedBrandId);
 
   // ── Lifted row state ───────────────────────────────────────────────────────
+  const [prevStageId, setPrevStageId] = useState<string | undefined>(stageId);
+  const [prevBrandId, setPrevBrandId] = useState<string>(selectedBrandId);
+
   const [rowState, setRowState] = useState<Record<string, StageRowState>>(
     () => {
-      const initialRows = buildRows(MOCK_BRANDS[0].id);
-      const defaultLoc =
-        useLocationsStore.getState().locations.find((l) => l.isDefault)?.name ??
-        '';
-      const hasLoc =
-        STAGE_CONFIG[
-          SLUG_TO_STAGE_ID[stageSlug ?? ''] ?? 'MELTING'
-        ]?.columns.some((c) => c.key === 'location') ?? false;
+      const initialRows = buildRows(selectedBrandId);
       return Object.fromEntries(
         initialRows.map((r) => [
           r.itemId,
-          emptyRowState(hasLoc ? defaultLoc : ''),
+          emptyRowState(hasLocationColumn ? defaultLocationName : ''),
         ]),
       );
     },
   );
 
-  // Reset row state when brand changes
-  const handleBrandChange = (brandId: string) => {
-    setSelectedBrandId(brandId);
-    setSearchQuery('');
-    const newRows = buildRows(brandId);
+  // Reset row state when brand or stage changes
+  if (selectedBrandId !== prevBrandId || stageId !== prevStageId) {
+    setPrevBrandId(selectedBrandId);
+    setPrevStageId(stageId);
+    const newRows = buildRows(selectedBrandId);
     setRowState(
       Object.fromEntries(
         newRows.map((r) => [
@@ -138,6 +133,11 @@ export default function StagePage() {
         ]),
       ),
     );
+  }
+
+  const handleBrandChange = (brandId: string) => {
+    setSelectedBrandId(brandId);
+    setSearchQuery('');
   };
 
   const handleUpdateField = (
@@ -149,20 +149,6 @@ export default function StagePage() {
       ...prev,
       [itemId]: { ...(prev[itemId] ?? emptyRowState()), [field]: value },
     }));
-  };
-
-  // ── Inward Return: selected items set ─────────────────────────────────────
-  const [selectedItems, setSelectedItems] = useState<Set<string>>(
-    () => new Set(buildRows(MOCK_BRANDS[0].id).map((r) => r.itemId)),
-  );
-
-  const handleToggleItem = (itemId: string) => {
-    setSelectedItems((prev) => {
-      const next = new Set(prev);
-      if (next.has(itemId)) next.delete(itemId);
-      else next.add(itemId);
-      return next;
-    });
   };
 
   // ── Previous stage output for mismatch validation ──────────────────────────
@@ -179,9 +165,7 @@ export default function StagePage() {
     setIsSubmitting(true);
     await new Promise((r) => setTimeout(r, 600)); // simulate API
 
-    const effectiveRows = isInwardReturn
-      ? rows.filter((r) => selectedItems.has(r.itemId))
-      : rows;
+    const effectiveRows = rows;
 
     const records = buildSubmissionRecords(stageId, effectiveRows, rowState);
     submit(records);
@@ -204,7 +188,6 @@ export default function StagePage() {
     setRowState(
       Object.fromEntries(rows.map((r) => [r.itemId, emptyRowState()])),
     );
-    if (isInwardReturn) setSelectedItems(new Set(rows.map((r) => r.itemId)));
 
     toast.success(
       `${config?.label} entries recorded for ${selectedBrand.name} — ${records.length} item${records.length !== 1 ? 's' : ''} saved.`,
@@ -327,48 +310,58 @@ export default function StagePage() {
       </div>
 
       {/* ── Table card (toolbar header + table) ── */}
-      <div className="rounded-2xl border border-border bg-card overflow-hidden">
+      <div className="rounded-2xl border border-border bg-card">
         {/* Toolbar row */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
-          <div className="relative flex-1">
+        <div className="sticky top-0 z-20 bg-card flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-3 border-b border-border rounded-t-2xl shadow-sm sm:shadow-none">
+          <div className="relative flex-1 w-full">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
             <Input
               placeholder="Search by item name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 h-9 bg-transparent border-0 shadow-none focus-visible:ring-0 text-sm placeholder:text-muted-foreground"
+              className="pl-9 h-9 bg-transparent border-0 shadow-none focus-visible:ring-0 text-sm placeholder:text-muted-foreground w-full"
             />
           </div>
 
-          <div className="h-5 w-px bg-border shrink-0" />
+          <div className="hidden sm:block h-5 w-px bg-border shrink-0" />
+          <div className="sm:hidden h-px w-full bg-border shrink-0" />
 
-          {/* Date */}
-          <div className="flex items-center gap-1.5 text-sm text-muted-foreground shrink-0">
-            <CalendarDays className="w-4 h-4" />
-            <span>{today}</span>
+          <div className="flex items-center justify-between sm:justify-start gap-3 w-full sm:w-auto px-2 sm:px-0">
+            {/* Date */}
+            <div className="flex items-center gap-1.5 text-sm text-muted-foreground shrink-0">
+              <CalendarDays className="w-4 h-4" />
+              <span>{today}</span>
+            </div>
+
+            {/* Shift */}
+            <Select value={selectedShift} onValueChange={setSelectedShift}>
+              <SelectTrigger className="w-24 h-9 text-sm shadow-none bg-transparent focus:ring-0">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {['S1', 'S2', 'S3', 'S4'].map((s) => (
+                  <SelectItem key={s} value={s} className="text-sm">
+                    {s}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <div className="hidden sm:block h-5 w-px bg-border shrink-0" />
+
+            <Button
+              size="sm"
+              className="gap-2 shrink-0 h-9 hidden sm:flex"
+              onClick={() => setReviewOpen(true)}
+            >
+              <ClipboardCheck className="w-4 h-4" />
+              Review &amp; Record
+            </Button>
           </div>
-
-          <div className="h-5 w-px bg-border shrink-0" />
-
-          {/* Shift */}
-          <Select value={selectedShift} onValueChange={setSelectedShift}>
-            <SelectTrigger className="w-24 h-9 text-sm shadow-none bg-transparent focus:ring-0">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {['S1', 'S2', 'S3', 'S4'].map((s) => (
-                <SelectItem key={s} value={s} className="text-sm">
-                  {s}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <div className="h-5 w-px bg-border shrink-0" />
 
           <Button
             size="sm"
-            className="gap-2 shrink-0 h-9"
+            className="gap-2 w-full sm:hidden h-9 mt-1"
             onClick={() => setReviewOpen(true)}
           >
             <ClipboardCheck className="w-4 h-4" />
@@ -383,8 +376,6 @@ export default function StagePage() {
           searchQuery={searchQuery}
           rowState={rowState}
           onUpdateField={handleUpdateField}
-          selectedItems={isInwardReturn ? selectedItems : undefined}
-          onToggleItem={isInwardReturn ? handleToggleItem : undefined}
           prevStageOutput={prevStageOutput}
         />
       </div>
@@ -397,7 +388,6 @@ export default function StagePage() {
         brandName={selectedBrand.name}
         rows={rows}
         rowState={rowState}
-        selectedItems={isInwardReturn ? selectedItems : undefined}
         onConfirm={handleConfirmSubmit}
         isSubmitting={isSubmitting}
       />
