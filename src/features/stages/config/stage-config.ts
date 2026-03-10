@@ -84,8 +84,9 @@ export const STAGE_CONFIG: Record<StageId, StageConfig> = {
     label: 'Outward Transfer',
     description: (b) => `Select destination and enter dispatch quantities — ${b}`,
     columns: [
-      { key: 'location',      header: 'Destination',   placeholder: 'Select location' },
-      { key: 'productionQty', header: 'Dispatch Qty', placeholder: 'Enter qty' },
+      { key: 'inputQty',      header: 'Input Qty',      placeholder: 'Enter input qty' },
+      { key: 'productionQty', header: 'Output Qty', placeholder: 'Enter output qty' },
+      { key: 'location',      header: 'Destination',    placeholder: 'Select destination' },
     ],
     locationDirection: 'destination',
   },
@@ -130,8 +131,9 @@ export const STAGE_CONFIG: Record<StageId, StageConfig> = {
     label: 'Inward Return',
     description: (b) => `Select source location and enter received quantities — ${b}`,
     columns: [
+      { key: 'inputQty',      header: 'Input Qty',       placeholder: 'Enter input qty' },
+      { key: 'productionQty', header: 'Output Qty',      placeholder: 'Enter output qty' },
       { key: 'location',      header: 'Source Location', placeholder: 'Select source' },
-      { key: 'productionQty', header: 'Received Qty',    placeholder: 'Enter qty' },
     ],
     locationDirection: 'source',
   },
@@ -140,9 +142,9 @@ export const STAGE_CONFIG: Record<StageId, StageConfig> = {
     label: 'Packaging',
     description: (b) => `Enter source location, input and output quantities for packaging — ${b}`,
     columns: [
-      { key: 'location',      header: 'Source Location', placeholder: 'Select source' },
       { key: 'inputQty',      header: 'Input Qty',       placeholder: 'Enter input qty' },
       { key: 'productionQty', header: 'Output Qty',      placeholder: 'Enter output qty' },
+      { key: 'location',      header: 'Source Location', placeholder: 'Select source' },
     ],
     locationDirection: 'source',
   },
