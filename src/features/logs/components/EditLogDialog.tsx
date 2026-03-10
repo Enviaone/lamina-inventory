@@ -34,12 +34,12 @@ export function EditLogDialog({
     entry?.data.rejectionQty ?? '',
   );
 
-  if (entry !== prevEntry) {
+  if (entry && entry !== prevEntry) {
     setPrevEntry(entry);
-    setShift(entry?.shift ?? 'S1');
-    setInputQty(entry?.data.inputQty ?? '');
-    setProdQty(entry?.data.productionQty ?? '');
-    setRejectionQty(entry?.data.rejectionQty ?? '');
+    setShift(entry.shift);
+    setInputQty(entry.data.inputQty);
+    setProdQty(entry.data.productionQty);
+    setRejectionQty(entry.data.rejectionQty);
   }
 
   const handleOpen = (v: boolean) => {
@@ -53,9 +53,11 @@ export function EditLogDialog({
   };
 
   const handleSave = () => {
-    if (!entry) return;
-    onSave(entry.id, shift, {
-      ...entry.data,
+    const targetEntry = entry || prevEntry;
+    if (!targetEntry) return;
+
+    onSave(targetEntry.id, shift, {
+      ...targetEntry.data,
       inputQty: String(inputQty),
       productionQty: String(productionQty),
       rejectionQty: String(rejectionQty),
@@ -63,15 +65,17 @@ export function EditLogDialog({
     onOpenChange(false);
   };
 
+  const currentEntry = entry || prevEntry;
+
   return (
     <ResponsiveDialog
       open={!!entry}
       onOpenChange={handleOpen}
       title="Edit Log Entry"
     >
-      {entry ? (
+      {currentEntry ? (
         <EditLogInputs
-          entry={entry}
+          entry={currentEntry}
           shift={shift}
           setShift={setShift}
           inputQty={inputQty}

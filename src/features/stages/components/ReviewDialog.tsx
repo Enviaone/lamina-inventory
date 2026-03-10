@@ -12,7 +12,6 @@ interface ReviewDialogProps {
   brandName: string;
   rows: FlatStageRow[];
   rowState: Record<string, StageRowState>;
-  selectedItems?: Set<string>;
   onConfirm: () => void;
   isSubmitting: boolean;
 }
@@ -30,15 +29,13 @@ export function ReviewDialog({
   brandName,
   rows,
   rowState,
-  selectedItems,
   onConfirm,
   isSubmitting,
 }: ReviewDialogProps) {
-  // Only include rows that have any data filled (and are selected for Inward Return)
+  // Only include rows that have quantitative data filled
   const filledRows = rows.filter((row) => {
-    if (selectedItems && !selectedItems.has(row.itemId)) return false;
     const s = rowState[row.itemId];
-    return s && (s.inputQty || s.productionQty || s.rejectionQty || s.location);
+    return s && (s.inputQty || s.productionQty || s.rejectionQty);
   });
 
   return (
@@ -130,9 +127,13 @@ function ReviewDialogContent({
                     className="hover:bg-muted/30 transition-colors"
                   >
                     <td className="py-2.5 pr-4">
-                      <p className="font-medium text-foreground leading-tight truncate max-w-[120px] sm:max-w-[200px]">
+                      <span
+                        key={row.itemId}
+                        className="inline-block px-2 py-1 bg-muted rounded text-xs font-medium truncate max-w-30 sm:max-w-50"
+                        title={row.itemName}
+                      >
                         {row.itemName}
-                      </p>
+                      </span>
                       <p className="text-[10px] text-muted-foreground">
                         {row.sku}
                       </p>
