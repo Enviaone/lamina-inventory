@@ -76,7 +76,7 @@ export function buildLogEntries(
   return rows
     .filter((row) => {
       const s = rowState[row.itemId];
-      return s && (s.inputQty || s.productionQty || s.rejectionQty || s.location);
+      return s && (s.inputQty || s.productionQty || s.rejectionQty);
     })
     .map((row) => ({
       id: crypto.randomUUID(),
