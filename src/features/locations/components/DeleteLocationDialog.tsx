@@ -1,3 +1,4 @@
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,6 +10,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import type { Location } from '@/store/locations-store';
+import { AlertTriangleIcon } from 'lucide-react';
 
 export interface DeleteLocationDialogProps {
   target: Location | null;
@@ -36,10 +38,13 @@ export function DeleteLocationDialog({
               </span>{' '}
               will be permanently removed. This cannot be undone.
               {target?.isDefault && (
-                <p className="mt-2 text-amber-600 font-medium text-sm">
-                  ⚠ This is the default location. Another location will be
-                  promoted automatically.
-                </p>
+                <Alert className="max-w-md border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-50 mt-4">
+                  <AlertTriangleIcon />
+                  <AlertTitle>Note</AlertTitle>
+                  <AlertDescription>
+                    This cannot be deleted as it is the default location.
+                  </AlertDescription>
+                </Alert>
               )}
             </div>
           </AlertDialogDescription>
@@ -47,7 +52,8 @@ export function DeleteLocationDialog({
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            variant="destructive"
+            disabled={target?.isDefault}
             onClick={() => {
               if (target) onConfirm(target.id);
             }}

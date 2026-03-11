@@ -176,7 +176,7 @@ function UserFormInputs({
   return (
     <div className="space-y-4 py-1">
       {/* Role legend (Alert) */}
-      <Alert className="mb-6 bg-blue-50/50 border-blue-100 text-blue-800 dark:bg-blue-950/20 dark:border-blue-900/50 dark:text-blue-200">
+      <Alert className="hidden mb-6 bg-blue-50/50 border-blue-100 text-blue-800 dark:bg-blue-950/20 dark:border-blue-900/50 dark:text-blue-200">
         <InfoIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
         <AlertDescription className="flex items-center gap-2 text-xs flex-wrap leading-relaxed">
           <Badge
@@ -240,30 +240,33 @@ function UserFormInputs({
         <Label htmlFor="u-password">
           Password{' '}
           {isEdit && (
-            <span className="text-muted-foreground font-normal">
-              (Leave blank to keep current)
-            </span>
+            <span className="text-muted-foreground font-normal"></span>
           )}
         </Label>
         <Input
           id="u-password"
           type="text"
-          placeholder={isEdit ? '••••••••' : 'Enter temporary password'}
+          placeholder={isEdit ? '••••••••' : 'Enter password'}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
 
       {/* Roles */}
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-1.5 min-w-0">
         <Label>Roles</Label>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="justify-between font-normal">
-              {roles.length === 0
-                ? 'Select roles…'
-                : roles.map(roleLabel).join(', ')}
-              <ChevronDown className="w-4 h-4 ml-2 text-muted-foreground" />
+          <DropdownMenuTrigger className="max-w-115.5" asChild>
+            <Button
+              variant="outline"
+              className="justify-between font-normal w-full max-w-full overflow-hidden"
+            >
+              <span className="truncate flex-1 text-left min-w-0 mr-2">
+                {roles.length === 0
+                  ? 'Select roles…'
+                  : roles.map(roleLabel).join(', ')}
+              </span>
+              <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-64">
@@ -294,7 +297,7 @@ function UserFormInputs({
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {roles.length > 0 && (
+        {/* {roles.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mt-1">
             {roles.map((r) => (
               <Badge key={r} variant="secondary" className="gap-1 pr-1">
@@ -309,7 +312,7 @@ function UserFormInputs({
               </Badge>
             ))}
           </div>
-        )}
+        )} */}
       </div>
 
       {isAdmin && (
