@@ -1,5 +1,5 @@
 export const APP_CONFIG = {
-  NAME: 'Lamina Inventory',
+  NAME: 'Lamina Foundries Ltd',
   VERSION: '1.0.0',
   DESCRIPTION: 'A comprehensive inventory and production management system',
 };
