@@ -23,20 +23,6 @@ export const MOCK_CREDENTIALS: MockCredential[] = [
     stageName: 'Shot Blast',
   },
   {
-    name: 'Priya Nair',
-    email: 'inspection@lamina.com',
-    password: 'inspect@123',
-    stage: 'INSPECTION',
-    stageName: 'Inspection',
-  },
-  {
-    name: 'Arjun Sharma',
-    email: 'outward@lamina.com',
-    password: 'outward@123',
-    stage: 'OUTWARD_TRANSFER',
-    stageName: 'Outward Transfer',
-  },
-  {
     name: 'Kavitha Reddy',
     email: 'proof@lamina.com',
     password: 'proof@123',
@@ -55,7 +41,7 @@ export const MOCK_CREDENTIALS: MockCredential[] = [
     email: 'hardness@lamina.com',
     password: 'hardness@123',
     stage: 'HARDNESS_INSPECTION',
-    stageName: 'Hardness Inspection',
+    stageName: 'Inspection',
   },
   {
     name: 'Vijay Krishnan',
@@ -63,13 +49,6 @@ export const MOCK_CREDENTIALS: MockCredential[] = [
     password: 'balance@123',
     stage: 'BALANCING',
     stageName: 'Balancing',
-  },
-  {
-    name: 'Lakshmi Patel',
-    email: 'inward@lamina.com',
-    password: 'inward@123',
-    stage: 'INWARD_RETURN',
-    stageName: 'Inward Return',
   },
   {
     name: 'Ramesh Babu',

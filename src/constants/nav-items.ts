@@ -4,12 +4,10 @@ import {
   PackageIcon,
   Flame,
   Wind,
-  ArrowUpRight,
   Gauge,
   Cpu,
   Microscope,
   Scale,
-  ArrowDownLeft,
   Archive,
   Factory,
   MapPin,
@@ -44,12 +42,12 @@ const ALL_STAGE_CHILDREN: NavChild[] = [
   { title: 'Melting',             url: '/stages/melting',             icon: Flame         },
   { title: 'Shot Blast',          url: '/stages/shot-blast',          icon: Wind          },
   // { title: 'Inspection',          url: '/stages/inspection',          icon: ScanSearch    },
-  { title: 'Outward Transfer',    url: '/stages/outward-transfer',    icon: ArrowUpRight  },
+  // { title: 'Outward Transfer',    url: '/stages/outward-transfer',    icon: ArrowUpRight  },
   { title: 'Proof Machines',      url: '/stages/proof-machines',      icon: Gauge         },
   { title: 'CNC',                 url: '/stages/cnc',                 icon: Cpu           },
-  { title: 'Hardness Inspection', url: '/stages/hardness-inspection', icon: Microscope    },
+  { title: 'Inspection', url: '/stages/hardness-inspection', icon: Microscope    },
   { title: 'Balancing',           url: '/stages/balancing',           icon: Scale         },
-  { title: 'Inward Return',       url: '/stages/inward-return',       icon: ArrowDownLeft },
+  // { title: 'Inward Return',       url: '/stages/inward-return',       icon: ArrowDownLeft },
   { title: 'Packaging',           url: '/stages/packaging',           icon: Archive       },
 ];
 
@@ -72,11 +70,9 @@ const stageItemMap: Record<string, NavItem> = Object.fromEntries(
 );
 
 // Override keys that don't match the enum exactly
-stageItemMap['SHOT_BLAST']          = ALL_STAGE_CHILDREN.find((c) => c.title === 'Shot Blast')!;
-stageItemMap['OUTWARD_TRANSFER']    = ALL_STAGE_CHILDREN.find((c) => c.title === 'Outward Transfer')!;
-stageItemMap['PROOF_MACHINES']      = ALL_STAGE_CHILDREN.find((c) => c.title === 'Proof Machines')!;
-stageItemMap['HARDNESS_INSPECTION'] = ALL_STAGE_CHILDREN.find((c) => c.title === 'Hardness Inspection')!;
-stageItemMap['INWARD_RETURN']       = ALL_STAGE_CHILDREN.find((c) => c.title === 'Inward Return')!;
+stageItemMap['SHOT_BLAST']          = ALL_STAGE_CHILDREN.find((c) => c.url.includes('/stages/shot-blast'))!;
+stageItemMap['PROOF_MACHINES']      = ALL_STAGE_CHILDREN.find((c) => c.url.includes('/stages/proof-machines'))!;
+stageItemMap['HARDNESS_INSPECTION'] = ALL_STAGE_CHILDREN.find((c) => c.url.includes('/stages/hardness-inspection'))!;
 
 export function getNavItemsForRole(role: UserRole): NavItem[] {
   return getNavItemsForRoles([role]);
