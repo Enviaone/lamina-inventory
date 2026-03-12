@@ -1,9 +1,15 @@
-import { useState } from 'react';
-import { Check, ChevronDown, InfoIcon, Phone, Shield, X } from 'lucide-react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import * as React from 'react';
+import {
+  useForm,
+  type UseFormRegister,
+  type FieldErrors,
+} from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Check, ChevronDown, Phone, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
 import { ResponsiveDialog } from '@/components/shared/ResponsiveDialog';
 import {
   DropdownMenu,
@@ -17,7 +23,7 @@ import type { ManagedUser } from '@/store/users-store';
 import type { UserRole } from '@/types/auth';
 import { STAGES } from '@/types/manufacturing';
 import { roleLabel } from '@/features/users/utils/user-utils';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { userFormSchema, type UserFormSchema } from '@/schema/user.schema';
 
 const ALL_STAGE_ROLES: UserRole[] = STAGES.map((s) => s.id as UserRole);
 
@@ -38,79 +44,66 @@ export function UserFormDialog({
 }: UserFormDialogProps) {
   const isEdit = !!initial;
 
-  const [prevInitial, setPrevInitial] = useState<ManagedUser | undefined>(
-    initial,
-  );
-  const [name, setName] = useState(initial?.name ?? '');
-  const [email, setEmail] = useState(initial?.email ?? '');
-  const [phone, setPhone] = useState(initial?.phone ?? '');
-  const [password, setPassword] = useState(initial?.password ?? '');
-  const [roles, setRoles] = useState<UserRole[]>(initial?.roles ?? []);
-  const [isActive, setIsActive] = useState(initial?.isActive ?? true);
-  const [error, setError] = useState('');
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<UserFormSchema>({
+    resolver: zodResolver(userFormSchema) as any, // Cast due to strict zod vs rhf types
+    defaultValues: {
+      name: initial?.name ?? '',
+      email: initial?.email ?? '',
+      phone: initial?.phone ?? '',
+      password: initial?.password ?? '',
+      roles: (initial?.roles as string[]) ?? [],
+      isActive: initial?.isActive ?? true,
+    },
+  });
 
-  if (initial !== prevInitial) {
-    setPrevInitial(initial);
-    setName(initial?.name ?? '');
-    setEmail(initial?.email ?? '');
-    setPhone(initial?.phone ?? '');
-    setPassword(initial?.password ?? '');
-    setRoles(initial?.roles ?? []);
-    setIsActive(initial?.isActive ?? true);
-    setError('');
-  }
-
+  const roles = watch('roles') || [];
   const isAdmin = roles.includes('ADMIN');
 
-  const handleOpenChange = (v: boolean) => {
-    if (v) {
-      setName(initial?.name ?? '');
-      setEmail(initial?.email ?? '');
-      setPhone(initial?.phone ?? '');
-      setPassword(initial?.password ?? '');
-      setRoles(initial?.roles ?? []);
-      setIsActive(initial?.isActive ?? true);
-      setError('');
+  React.useEffect(() => {
+    if (open) {
+      reset({
+        name: initial?.name ?? '',
+        email: initial?.email ?? '',
+        phone: initial?.phone ?? '',
+        password: initial?.password ?? '',
+        roles: (initial?.roles as string[]) ?? [],
+        isActive: initial?.isActive ?? true,
+      });
     }
-    onOpenChange(v);
-  };
+  }, [open, initial, reset]);
 
   const toggleRole = (role: UserRole) => {
     if (role === 'ADMIN') {
-      setRoles(roles.includes('ADMIN') ? [] : ['ADMIN']);
+      setValue('roles', roles.includes('ADMIN') ? [] : ['ADMIN']);
       return;
     }
     if (isAdmin) return;
-    setRoles((prev) =>
-      prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role],
-    );
+    const currentRoles = roles as string[];
+    const newRoles = currentRoles.includes(role)
+      ? currentRoles.filter((r) => r !== role)
+      : [...currentRoles, role];
+    setValue('roles', newRoles);
   };
 
-  const handleSave = () => {
-    setError('');
-    if (!name.trim()) return setError('Name is required.');
-    if (!email.trim()) return setError('Email is required.');
-    if (!password.trim()) return setError('Password is required.');
-    if (roles.length === 0)
-      return setError('At least one role must be assigned.');
-    if (!isEdit && emailInUse(email.trim()))
-      return setError('Email is already in use.');
-
-    onSave({
-      name: name.trim(),
-      email: email.trim(),
-      phone: phone.trim() || undefined,
-      password: password.trim(),
-      roles,
-      isActive,
-    });
+  const onSubmit = (data: UserFormSchema) => {
+    if (!isEdit && emailInUse(data.email)) {
+      return;
+    }
+    onSave(data as unknown as Omit<ManagedUser, 'id' | 'createdAt'>);
     onOpenChange(false);
   };
 
   return (
     <ResponsiveDialog
       open={open}
-      onOpenChange={handleOpenChange}
+      onOpenChange={onOpenChange}
       title={isEdit ? 'Edit User' : 'Add User'}
       description={
         isEdit
@@ -119,92 +112,51 @@ export function UserFormDialog({
       }
       desktopClassName="max-w-md"
     >
-      <UserFormInputs
-        name={name}
-        setName={setName}
-        email={email}
-        setEmail={setEmail}
-        phone={phone}
-        setPhone={setPhone}
-        password={password}
-        setPassword={setPassword}
-        roles={roles}
-        toggleRole={toggleRole}
-        isAdmin={isAdmin}
-        error={error}
-        isEdit={isEdit}
-        onSave={handleSave}
-        onCancel={() => onOpenChange(false)}
-      />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <UserFormInputs
+          register={register}
+          roles={roles as UserRole[]}
+          toggleRole={toggleRole}
+          isAdmin={isAdmin}
+          errors={errors}
+          isEdit={isEdit}
+          onCancel={() => onOpenChange(false)}
+        />
+      </form>
     </ResponsiveDialog>
   );
 }
 
 function UserFormInputs({
-  name,
-  setName,
-  email,
-  setEmail,
-  phone,
-  setPhone,
-  password,
-  setPassword,
+  register,
   roles,
   toggleRole,
   isAdmin,
-  error,
+  errors,
   isEdit,
-  onSave,
   onCancel,
 }: {
-  name: string;
-  setName: (v: string) => void;
-  email: string;
-  setEmail: (v: string) => void;
-  phone: string;
-  setPhone: (v: string) => void;
-  password: string;
-  setPassword: (v: string) => void;
+  register: UseFormRegister<UserFormSchema>;
   roles: UserRole[];
   toggleRole: (role: UserRole) => void;
   isAdmin: boolean;
-  error: string;
+  errors: FieldErrors<UserFormSchema>;
   isEdit: boolean;
-  onSave: () => void;
   onCancel: () => void;
 }) {
   return (
     <div className="space-y-4 py-1">
-      {/* Role legend (Alert) */}
-      <Alert className="hidden mb-6 bg-blue-50/50 border-blue-100 text-blue-800 dark:bg-blue-950/20 dark:border-blue-900/50 dark:text-blue-200">
-        <InfoIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-        <AlertDescription className="flex items-center gap-2 text-xs flex-wrap leading-relaxed">
-          <Badge
-            variant="default"
-            className="text-[10px] bg-blue-600 hover:bg-blue-600 dark:bg-blue-500 text-white"
-          >
-            Administrator
-          </Badge>
-          <span>role cannot be combined with stage roles.</span>
-          <Badge
-            variant="outline"
-            className="text-[10px] border-blue-200 dark:border-blue-800"
-          >
-            Stage Role
-          </Badge>
-          <span>roles can be combined freely.</span>
-        </AlertDescription>
-      </Alert>
-
       {/* Name */}
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="u-name">Full Name</Label>
         <Input
           id="u-name"
           placeholder="e.g. Rajan Mehta"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          {...register('name')}
         />
+        {errors.name && (
+          <p className="text-xs text-destructive">{errors.name.message}</p>
+        )}
       </div>
 
       {/* Email */}
@@ -214,9 +166,11 @@ function UserFormInputs({
           id="u-email"
           type="email"
           placeholder="user@lamina.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          {...register('email')}
         />
+        {errors.email && (
+          <p className="text-xs text-destructive">{errors.email.message}</p>
+        )}
       </div>
 
       {/* Phone */}
@@ -229,39 +183,36 @@ function UserFormInputs({
             type="tel"
             placeholder="+91 98400 00000"
             className="pl-9"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            {...register('phone')}
           />
         </div>
       </div>
 
-      {/* Password (if new user or changing it) - simplified visual for brevity */}
+      {/* Password */}
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="u-password">
-          Password{' '}
-          {isEdit && (
-            <span className="text-muted-foreground font-normal"></span>
-          )}
-        </Label>
+        <Label htmlFor="u-password">Password</Label>
         <Input
           id="u-password"
           type="text"
           placeholder={isEdit ? '••••••••' : 'Enter password'}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          {...register('password')}
         />
+        {errors.password && (
+          <p className="text-xs text-destructive">{errors.password.message}</p>
+        )}
       </div>
 
       {/* Roles */}
       <div className="flex flex-col gap-1.5 min-w-0">
         <Label>Roles</Label>
         <DropdownMenu>
-          <DropdownMenuTrigger className="max-w-115.5" asChild>
+          <DropdownMenuTrigger className="max-w-xs" asChild>
             <Button
               variant="outline"
-              className="justify-between font-normal w-full max-w-full overflow-hidden"
+              type="button"
+              className="justify-between font-normal w-full"
             >
-              <span className="truncate flex-1 text-left min-w-0 mr-2">
+              <span className="truncate text-left flex-1 min-w-0 mr-2">
                 {roles.length === 0
                   ? 'Select roles…'
                   : roles.map(roleLabel).join(', ')}
@@ -296,23 +247,9 @@ function UserFormInputs({
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
-
-        {/* {roles.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mt-1">
-            {roles.map((r) => (
-              <Badge key={r} variant="secondary" className="gap-1 pr-1">
-                {roleLabel(r)}
-                <button
-                  type="button"
-                  onClick={() => toggleRole(r)}
-                  className="hover:text-destructive transition-colors ml-0.5"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </Badge>
-            ))}
-          </div>
-        )} */}
+        {errors.roles && (
+          <p className="text-xs text-destructive">{errors.roles.message}</p>
+        )}
       </div>
 
       {isAdmin && (
@@ -320,12 +257,6 @@ function UserFormInputs({
           <Shield className="w-4 h-4 shrink-0 mt-0.5" />
           Admin role is exclusive and cannot be combined with any stage role.
         </div>
-      )}
-
-      {error && (
-        <p className="flex items-center gap-1.5 text-sm text-destructive">
-          <X className="w-3.5 h-3.5" /> {error}
-        </p>
       )}
 
       <div className="pt-4 flex flex-col-reverse sm:flex-row sm:justify-end sm:gap-2">
@@ -337,7 +268,7 @@ function UserFormInputs({
         >
           Cancel
         </Button>
-        <Button onClick={onSave}>
+        <Button type="submit">
           <Check className="w-4 h-4 mr-1.5" />
           {isEdit ? 'Save Changes' : 'Add User'}
         </Button>
