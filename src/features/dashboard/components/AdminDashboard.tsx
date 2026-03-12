@@ -10,6 +10,7 @@ import { KpiCard, KpiCardGroup } from '@/features/dashboard/components/KpiCard';
 import { StagePipeline } from '@/features/dashboard/components/StagePipeline';
 import { PendingTasksWidget } from '@/features/dashboard/components/PendingTasksWidget';
 import { RecentActivity } from '@/features/dashboard/components/RecentActivity';
+import { LocationInsights } from '@/features/dashboard/components/LocationInsights';
 import {
   TOTAL_BRANDS,
   TOTAL_ITEMS,
@@ -85,12 +86,15 @@ export function AdminDashboard() {
       {/* Pipeline */}
       <StagePipeline />
 
-      {/* Bottom row: Low stock + Recent activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+      {/* Bottom row: Low stock + Recent activity + Location Insights */}
+      <div className="grid grid-cols-1 lg:grid-cols-6 gap-4">
         <div className="lg:col-span-2">
           <PendingTasksWidget />
         </div>
-        <div className="lg:col-span-3">
+        <div className="lg:col-span-2">
+          <LocationInsights />
+        </div>
+        <div className="lg:col-span-2">
           <RecentActivity />
         </div>
       </div>
