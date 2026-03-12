@@ -13,8 +13,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from '@/components/ui/sidebar';
+import { useSidebar } from '@/hooks/use-sidebar';
 import { useAuthStore } from '@/store/auth-store';
 
 interface NavUserProps {

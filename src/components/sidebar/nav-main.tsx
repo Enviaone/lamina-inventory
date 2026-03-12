@@ -13,8 +13,8 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-  useSidebar,
 } from '@/components/ui/sidebar';
+import { useSidebar } from '@/hooks/use-sidebar';
 import type { NavItem } from '@/constants/nav-items';
 
 export function NavMain({ items }: { items: NavItem[] }) {
