@@ -33,12 +33,6 @@ export function LogCard({ entry, isAdmin, onEdit, onDelete }: LogCardProps) {
             <span className="font-medium text-foreground/70">
               {entry.itemName}
             </span>
-            {entry.sku && (
-              <>
-                <span className="text-border">·</span>
-                <span className="font-mono">{entry.sku}</span>
-              </>
-            )}
             <Badge
               variant="outline"
               className="text-[10px] h-5 px-1.5 shrink-0"

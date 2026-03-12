@@ -134,9 +134,6 @@ function ReviewDialogContent({
                       >
                         {row.itemName}
                       </span>
-                      <p className="text-[10px] text-muted-foreground">
-                        {row.sku}
-                      </p>
                     </td>
                     {config.columns.map((col) => (
                       <td key={col.key} className="py-2.5 pr-4">

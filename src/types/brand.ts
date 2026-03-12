@@ -1,7 +1,6 @@
 export interface BrandItem {
   id: string;
   name: string;
-  sku: string;
   currentStock: number;
   lowStockThreshold: number;
 }
@@ -30,7 +29,6 @@ const generateMockItems = (brandPrefix: string, startIdx: number, count: number)
     return {
       id: `${brandPrefix.toLowerCase()}-${idx}`,
       name: `${partName} Type ${String.fromCharCode(65 + (idx % 26))}`,
-      sku: `${brandPrefix}-${partName.split(' ').map((s) => s[0]).join('')}-${String(idx).padStart(3, '0')}`,
       currentStock: 100 + ((idx * 83) % 4900),
       lowStockThreshold: 50 + ((idx * 17) % 500),
     };
@@ -44,8 +42,8 @@ export const MOCK_BRANDS: Brand[] = [
     code: 'AL-001',
     color: 'blue',
     items: [
-      { id: '1a', name: 'Flywheel Ring Gear', sku: 'AL-FRG-001', currentStock: 4488, lowStockThreshold: 1500 },
-      { id: '1b', name: 'Crankshaft Pulley', sku: 'AL-CSP-002', currentStock: 672, lowStockThreshold: 500 },
+      { id: '1a', name: 'Flywheel Ring Gear', currentStock: 4488, lowStockThreshold: 1500 },
+      { id: '1b', name: 'Crankshaft Pulley', currentStock: 672, lowStockThreshold: 500 },
       ...generateMockItems('AL', 3, 18),
     ],
   },
@@ -55,8 +53,8 @@ export const MOCK_BRANDS: Brand[] = [
     code: 'TM-001',
     color: 'rose',
     items: [
-      { id: '2a', name: 'Brake Drum', sku: 'TM-BD-001', currentStock: 1956, lowStockThreshold: 1000 },
-      { id: '2b', name: 'Clutch Housing', sku: 'TM-CH-002', currentStock: 56458, lowStockThreshold: 2000 },
+      { id: '2a', name: 'Brake Drum', currentStock: 1956, lowStockThreshold: 1000 },
+      { id: '2b', name: 'Clutch Housing', currentStock: 56458, lowStockThreshold: 2000 },
       ...generateMockItems('TM', 3, 18),
     ],
   },
@@ -66,8 +64,8 @@ export const MOCK_BRANDS: Brand[] = [
     code: 'MH-001',
     color: 'amber',
     items: [
-      { id: '3a', name: 'Camshaft Sprocket', sku: 'MH-CS-001', currentStock: 76734, lowStockThreshold: 24000 },
-      { id: '3b', name: 'Timing Cover', sku: 'MH-TC-002', currentStock: 3473, lowStockThreshold: 500 },
+      { id: '3a', name: 'Camshaft Sprocket', currentStock: 76734, lowStockThreshold: 24000 },
+      { id: '3b', name: 'Timing Cover', currentStock: 3473, lowStockThreshold: 500 },
       ...generateMockItems('MH', 3, 18),
     ],
   },
@@ -77,7 +75,7 @@ export const MOCK_BRANDS: Brand[] = [
     code: 'FM-001',
     color: 'violet',
     items: [
-      { id: '4a', name: 'Differential Housing', sku: 'FM-DH-001', currentStock: 788, lowStockThreshold: 750 },
+      { id: '4a', name: 'Differential Housing', currentStock: 788, lowStockThreshold: 750 },
       ...generateMockItems('FM', 2, 19),
     ],
   },
@@ -87,8 +85,8 @@ export const MOCK_BRANDS: Brand[] = [
     code: 'EM-001',
     color: 'green',
     items: [
-      { id: '5a', name: 'Gear Shift Fork', sku: 'EM-GSF-001', currentStock: 4105, lowStockThreshold: 1000 },
-      { id: '5b', name: 'Propeller Shaft', sku: 'EM-PS-002', currentStock: 1133, lowStockThreshold: 1000 },
+      { id: '5a', name: 'Gear Shift Fork', currentStock: 4105, lowStockThreshold: 1000 },
+      { id: '5b', name: 'Propeller Shaft', currentStock: 1133, lowStockThreshold: 1000 },
       ...generateMockItems('EM', 3, 18),
     ],
   },
@@ -98,7 +96,7 @@ export const MOCK_BRANDS: Brand[] = [
     code: 'VC-001',
     color: 'orange',
     items: [
-      { id: '6a', name: 'Torque Plate', sku: 'VC-TP-001', currentStock: 2210, lowStockThreshold: 800 },
+      { id: '6a', name: 'Torque Plate', currentStock: 2210, lowStockThreshold: 800 },
       ...generateMockItems('VC', 2, 19),
     ],
   },

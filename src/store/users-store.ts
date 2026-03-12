@@ -27,13 +27,10 @@ const SEED_USERS: ManagedUser[] = [
   { id: 'admin',    name: 'Admin User',     email: 'admin@lamina.com',     phone: '+91 98400 00001', password: 'admin@123',    roles: ['ADMIN'],              isActive: true,  createdAt: new Date().toISOString() },
   { id: 'melting',  name: 'Rajan Mehta',    email: 'melting@lamina.com',   phone: '+91 98400 00002', password: 'melting@123',  roles: ['MELTING'],            isActive: true,  createdAt: new Date().toISOString() },
   { id: 'shotblast',name: 'Suresh Pillai',  email: 'shotblast@lamina.com', phone: '+91 98400 00003', password: 'shotblast@123',roles: ['SHOT_BLAST'],         isActive: true,  createdAt: new Date().toISOString() },
-  { id: 'inspect',  name: 'Priya Nair',     email: 'inspection@lamina.com',phone: '+91 98400 00004', password: 'inspect@123',  roles: ['INSPECTION'],         isActive: true,  createdAt: new Date().toISOString() },
-  { id: 'outward',  name: 'Arjun Sharma',   email: 'outward@lamina.com',   phone: '+91 98400 00005', password: 'outward@123',  roles: ['OUTWARD_TRANSFER'],   isActive: false, createdAt: new Date().toISOString() },
   { id: 'proof',    name: 'Kavitha Reddy',  email: 'proof@lamina.com',     phone: '+91 98400 00006', password: 'proof@123',    roles: ['PROOF_MACHINES'],     isActive: true,  createdAt: new Date().toISOString() },
   { id: 'cnc',      name: 'Dinesh Kumar',   email: 'cnc@lamina.com',       phone: '+91 98400 00007', password: 'cnc@123',      roles: ['CNC'],                isActive: true,  createdAt: new Date().toISOString() },
   { id: 'hardness', name: 'Meena Sundaram', email: 'hardness@lamina.com',  phone: '+91 98400 00008', password: 'hardness@123', roles: ['HARDNESS_INSPECTION'],isActive: false, createdAt: new Date().toISOString() },
   { id: 'balance',  name: 'Vijay Krishnan', email: 'balancing@lamina.com', phone: '+91 98400 00009', password: 'balance@123',  roles: ['BALANCING'],          isActive: true,  createdAt: new Date().toISOString() },
-  { id: 'inward',   name: 'Lakshmi Patel',  email: 'inward@lamina.com',    phone: '+91 98400 00010', password: 'inward@123',   roles: ['INWARD_RETURN'],      isActive: true,  createdAt: new Date().toISOString() },
   { id: 'packing',  name: 'Ramesh Babu',    email: 'packing@lamina.com',   phone: '+91 98400 00011', password: 'pack@123',     roles: ['PACKAGING'],          isActive: true,  createdAt: new Date().toISOString() },
 ];
 

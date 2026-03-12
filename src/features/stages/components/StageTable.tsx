@@ -52,8 +52,7 @@ export function StageTable({
   const filteredRows = rows.filter(
     (r) =>
       r.brandName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      r.itemName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      r.sku.toLowerCase().includes(searchQuery.toLowerCase()),
+      r.itemName.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const getApproved = (state: StageRowState) => {
@@ -107,9 +106,6 @@ export function StageTable({
                             {row.itemName}
                           </span>
                         </div>
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          {row.sku}
-                        </p>
                       </div>
                     </div>
                     {config.showApproved && (
@@ -201,9 +197,7 @@ export function StageTable({
               <TableHead className="font-semibold text-foreground">
                 Item
               </TableHead>
-              <TableHead className="font-semibold text-foreground">
-                SKU
-              </TableHead>
+
               {config.columns.map((col) => (
                 <TableHead
                   key={col.key}
@@ -225,7 +219,7 @@ export function StageTable({
               <TableRow>
                 <TableCell
                   colSpan={
-                    3 +
+                    2 +
                     config.columns.length +
                     (config.showApproved ? 1 : 0) +
                     1
@@ -260,11 +254,7 @@ export function StageTable({
                       </div>
                     </TableCell>
 
-                    <TableCell>
-                      <span className="text-xs text-muted-foreground mt-0.5 whitespace-nowrap">
-                        {row.sku}
-                      </span>
-                    </TableCell>
+
 
                     {config.columns.map((col) => (
                       <TableCell key={col.key}>

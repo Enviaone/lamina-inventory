@@ -39,10 +39,8 @@ export default function BrandItemsPage() {
     );
   }
 
-  const filteredItems = brand.items.filter(
-    (item) =>
-      item.name.toLowerCase().includes(search.toLowerCase()) ||
-      item.sku.toLowerCase().includes(search.toLowerCase()),
+  const filteredItems = brand.items.filter((item) =>
+    item.name.toLowerCase().includes(search.toLowerCase()),
   );
 
   const handleSaveItem = (data: BrandItemFormSchema) => {

@@ -62,7 +62,6 @@ function buildRows(brandId: string): FlatStageRow[] {
     brandName: brand.name,
     itemId: item.id,
     itemName: item.name,
-    sku: item.sku,
     currentStock: item.currentStock,
   }));
 }

@@ -14,13 +14,10 @@ export interface StageStat {
 export const PIPELINE_STATS: StageStat[] = [
   { stageId: 'MELTING',             label: 'Melting',             input: 0,     output: 8420,  rejections: 0,   status: 'done'    },
   { stageId: 'SHOT_BLAST',          label: 'Shot Blast',          input: 8420,  output: 8180,  rejections: 0,   status: 'done'    },
-  { stageId: 'INSPECTION',          label: 'Inspection',          input: 8180,  output: 7650,  rejections: 530, status: 'done'    },
-  { stageId: 'OUTWARD_TRANSFER',    label: 'Outward Transfer',    input: 7650,  output: 7200,  rejections: 0,   status: 'partial' },
   { stageId: 'PROOF_MACHINES',      label: 'Proof Machines',      input: 7200,  output: 5400,  rejections: 0,   status: 'partial' },
   { stageId: 'CNC',                 label: 'CNC',                 input: 0,     output: 0,     rejections: 0,   status: 'pending' },
-  { stageId: 'HARDNESS_INSPECTION', label: 'Hardness Inspection', input: 0,     output: 0,     rejections: 0,   status: 'pending' },
+  { stageId: 'HARDNESS_INSPECTION', label: 'Inspection', input: 0,     output: 0,     rejections: 0,   status: 'pending' },
   { stageId: 'BALANCING',           label: 'Balancing',           input: 0,     output: 0,     rejections: 0,   status: 'pending' },
-  { stageId: 'INWARD_RETURN',       label: 'Inward Return',       input: 0,     output: 0,     rejections: 0,   status: 'pending' },
   { stageId: 'PACKAGING',           label: 'Packaging',           input: 0,     output: 0,     rejections: 0,   status: 'pending' },
 ];
 
@@ -39,7 +36,6 @@ export interface ActivityEntry {
 export const RECENT_ACTIVITY: ActivityEntry[] = [
   { id: '1', stage: 'Inspection',      user: 'Priya Nair',    brand: 'Ashok Leyland', item: 'Flywheel Ring Gear',  qty: 530,  timeAgo: '8 min ago',  type: 'rejection'   },
   { id: '2', stage: 'Shot Blast',      user: 'Suresh Pillai', brand: 'Tata Motors',   item: 'Brake Drum',          qty: 1200, timeAgo: '22 min ago', type: 'production'  },
-  { id: '3', stage: 'Outward Transfer',user: 'Arjun Sharma',  brand: 'Mahindra',      item: 'Camshaft Sprocket',   qty: 850,  timeAgo: '41 min ago', type: 'transfer'    },
   { id: '4', stage: 'Melting',         user: 'Rajan Mehta',   brand: 'Eicher Motors', item: 'Gear Shift Fork',     qty: 2100, timeAgo: '1 hr ago',   type: 'production'  },
   { id: '5', stage: 'Proof Machines',  user: 'Kavitha Reddy', brand: 'Tata Motors',   item: 'Clutch Housing',      qty: 980,  timeAgo: '1 hr ago',   type: 'production'  },
 ];

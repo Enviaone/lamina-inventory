@@ -10,7 +10,6 @@ export interface SubmissionRecord {
   brandName: string;
   itemId: string;
   itemName: string;
-  sku: string;
   data: StageRowState;
   submittedAt: string;
 }
@@ -81,7 +80,6 @@ export function buildSubmissionRecords(
       brandName: row.brandName,
       itemId: row.itemId,
       itemName: row.itemName,
-      sku: row.sku,
       data: rowState[row.itemId],
       submittedAt: new Date().toISOString(),
     }));

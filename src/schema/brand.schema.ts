@@ -14,7 +14,6 @@ export type BrandFormSchema = z.infer<typeof brandFormSchema>;
 
 export const brandItemFormSchema = z.object({
   name: z.string().min(1, 'Item name is required').max(100, 'Name is too long'),
-  sku: z.string().min(1, 'SKU is required').max(50, 'SKU is too long'),
 });
 
 export type BrandItemFormSchema = z.infer<typeof brandItemFormSchema>;

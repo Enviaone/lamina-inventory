@@ -35,7 +35,6 @@ export function BrandItemFormDialog({
     resolver: zodResolver(brandItemFormSchema),
     defaultValues: {
       name: '',
-      sku: '',
     },
   });
 
@@ -44,12 +43,10 @@ export function BrandItemFormDialog({
       if (initial) {
         form.reset({
           name: initial.name,
-          sku: initial.sku,
         });
       } else {
         form.reset({
           name: '',
-          sku: '',
         });
       }
     }
@@ -102,24 +99,6 @@ function ItemForm({
             <Field className="gap-2">
               <FieldLabel htmlFor="item-name">Item Name</FieldLabel>
               <Input id="item-name" placeholder="e.g. Brake Drum" {...field} />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-
-        <Controller
-          control={form.control}
-          name="sku"
-          render={({ field, fieldState }) => (
-            <Field className="gap-2">
-              <FieldLabel htmlFor="item-sku">SKU Code</FieldLabel>
-              <Input
-                id="item-sku"
-                placeholder="e.g. TM-BD-001"
-                className="uppercase"
-                {...field}
-                onChange={(e) => field.onChange(e.target.value.toUpperCase())}
-              />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}

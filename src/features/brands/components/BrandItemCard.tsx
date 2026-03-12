@@ -42,12 +42,9 @@ export function BrandItemCard({
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-foreground text-[15px] leading-tight mb-0.5">
+          <p className="font-semibold text-foreground text-[15px] leading-tight">
             {item.name}
           </p>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground">{item.sku}</span>
-          </div>
         </div>
       </div>
 

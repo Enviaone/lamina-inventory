@@ -14,7 +14,6 @@ export interface LogEntry {
   brandName: string;
   itemId: string;
   itemName: string;
-  sku: string;
   shift: string;          // S1 / S2 / S3 / S4
   userId: string;
   userName: string;
@@ -86,7 +85,6 @@ export function buildLogEntries(
       brandName: row.brandName,
       itemId: row.itemId,
       itemName: row.itemName,
-      sku: row.sku,
       shift,
       userId,
       userName,
