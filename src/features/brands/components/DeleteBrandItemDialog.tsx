@@ -9,17 +9,20 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import type { BrandItem } from '@/types/brand';
+import { Loader2 } from 'lucide-react';
 
 export interface DeleteBrandItemDialogProps {
   item: BrandItem | null;
   onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
+  isDeleting?: boolean;
 }
 
 export function DeleteBrandItemDialog({
   item,
   onOpenChange,
   onConfirm,
+  isDeleting,
 }: DeleteBrandItemDialogProps) {
   return (
     <AlertDialog open={!!item} onOpenChange={onOpenChange}>
@@ -33,9 +36,20 @@ export function DeleteBrandItemDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction variant="destructive" onClick={onConfirm}>
-            Delete
+          <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+          <AlertDialogAction 
+            variant="destructive" 
+            onClick={onConfirm}
+            disabled={isDeleting}
+          >
+            {isDeleting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Deleting...
+              </>
+            ) : (
+              'Delete'
+            )}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

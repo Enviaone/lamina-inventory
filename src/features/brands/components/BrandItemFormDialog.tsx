@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useForm, Controller, type UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,6 +21,7 @@ export interface BrandItemFormDialogProps {
   brandName: string;
   initial?: BrandItem;
   onSave: (data: BrandItemFormSchema) => void;
+  isSubmitting?: boolean;
 }
 
 export function BrandItemFormDialog({
@@ -28,6 +30,7 @@ export function BrandItemFormDialog({
   brandName,
   initial,
   onSave,
+  isSubmitting,
 }: BrandItemFormDialogProps) {
   const isEdit = !!initial;
 
@@ -54,7 +57,7 @@ export function BrandItemFormDialog({
 
   const onSubmit = (data: BrandItemFormSchema) => {
     onSave(data);
-    onOpenChange(false);
+    // Parent handles closing
   };
 
   return (
@@ -73,6 +76,7 @@ export function BrandItemFormDialog({
         onSubmit={onSubmit}
         isEdit={isEdit}
         onCancel={() => onOpenChange(false)}
+        isSubmitting={isSubmitting}
       />
     </ResponsiveDialog>
   );
@@ -83,11 +87,13 @@ function ItemForm({
   onSubmit,
   isEdit,
   onCancel,
+  isSubmitting,
 }: {
   form: UseFormReturn<BrandItemFormSchema>;
   onSubmit: (data: BrandItemFormSchema) => void;
   isEdit: boolean;
   onCancel: () => void;
+  isSubmitting?: boolean;
 }) {
   return (
     <Form {...form}>
@@ -98,7 +104,12 @@ function ItemForm({
           render={({ field, fieldState }) => (
             <Field className="gap-2">
               <FieldLabel htmlFor="item-name">Item Name</FieldLabel>
-              <Input id="item-name" placeholder="e.g. Brake Drum" {...field} />
+              <Input 
+                id="item-name" 
+                placeholder="e.g. Brake Drum" 
+                {...field} 
+                disabled={isSubmitting}
+              />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
@@ -110,10 +121,20 @@ function ItemForm({
             variant="outline"
             className="mt-2 sm:mt-0"
             onClick={onCancel}
+            disabled={isSubmitting}
           >
             Cancel
           </Button>
-          <Button type="submit">{isEdit ? 'Save Changes' : 'Add Item'}</Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {isEdit ? 'Saving...' : 'Adding...'}
+              </>
+            ) : (
+              isEdit ? 'Save Changes' : 'Add Item'
+            )}
+          </Button>
         </div>
       </form>
     </Form>

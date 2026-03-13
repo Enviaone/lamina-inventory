@@ -14,12 +14,14 @@ export interface DeleteBrandDialogProps {
   brand: Brand | null;
   onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
+  isDeleting?: boolean;
 }
 
 export function DeleteBrandDialog({
   brand,
   onOpenChange,
   onConfirm,
+  isDeleting,
 }: DeleteBrandDialogProps) {
   return (
     <AlertDialog open={!!brand} onOpenChange={onOpenChange}>
@@ -34,8 +36,12 @@ export function DeleteBrandDialog({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction variant="destructive" onClick={onConfirm}>
-            Delete
+          <AlertDialogAction 
+            variant="destructive" 
+            onClick={onConfirm}
+            disabled={isDeleting}
+          >
+            {isDeleting ? 'Deleting...' : 'Delete'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
