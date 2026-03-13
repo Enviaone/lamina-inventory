@@ -75,24 +75,11 @@ function ReviewDialogContent({
 }) {
   const hasData = filledRows.length > 0;
 
-  // Compute totals
-  const totals = filledRows.reduce(
-    (acc, row) => {
-      const s = rowState[row.itemId];
-      acc.input += parseFloat(s?.inputQty || '0') || 0;
-      acc.production += parseFloat(s?.productionQty || '0') || 0;
-      acc.rejection += parseFloat(s?.rejectionQty || '0') || 0;
-      if (config.showApproved) acc.approved += getApproved(s);
-      return acc;
-    },
-    { input: 0, production: 0, rejection: 0, approved: 0 },
-  );
-
   return (
     <>
-      <div className="overflow-y-auto w-full py-4 -mx-1 px-1">
+      <div className="overflow-y-auto w-full mt-4">
         {!hasData ? (
-          <div className="text-center py-10 text-muted-foreground text-sm">
+          <div className="text-center py-10 text-muted-foreground text-sm p-4">
             No data entered yet. Fill in at least one row to record.
           </div>
         ) : (
@@ -172,49 +159,11 @@ function ReviewDialogContent({
                 );
               })}
             </tbody>
-
-            {/* Totals row */}
-            <tfoot>
-              <tr className="border-t-2 border-border bg-muted/40">
-                <td className="py-2.5 pr-4 font-bold text-xs text-foreground">
-                  Total ({filledRows.length} item
-                  {filledRows.length !== 1 ? 's' : ''})
-                </td>
-                {config.columns.map((col) => (
-                  <td key={col.key} className="py-2.5 pr-4">
-                    {col.key !== 'location' && (
-                      <span className="font-bold text-foreground">
-                        {col.key === 'inputQty'
-                          ? totals.input
-                          : col.key === 'productionQty'
-                            ? totals.production
-                            : col.key === 'rejectionQty'
-                              ? totals.rejection
-                              : 0}
-                        <span className="text-[10px] font-normal text-muted-foreground ml-1">
-                          pcs
-                        </span>
-                      </span>
-                    )}
-                  </td>
-                ))}
-                {config.showApproved && (
-                  <td className="py-2.5">
-                    <span className="font-bold text-green-600">
-                      {totals.approved}
-                    </span>
-                    <span className="text-[10px] font-normal text-muted-foreground ml-1">
-                      pcs
-                    </span>
-                  </td>
-                )}
-              </tr>
-            </tfoot>
           </table>
         )}
       </div>
 
-      <div className="pt-4 mt-auto border-t border-border flex flex-col-reverse sm:flex-row sm:justify-end sm:gap-2">
+      <div className="sticky bottom-0 bg-background p-4 mt-auto border-t border-border flex flex-col-reverse sm:flex-row sm:justify-end sm:gap-2">
         <Button
           type="button"
           variant="outline"

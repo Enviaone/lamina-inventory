@@ -32,7 +32,7 @@ export function ResponsiveDialog({
   description,
   children,
   desktopClassName = 'max-w-sm',
-  drawerClassName = 'p-4 pt-0',
+  drawerClassName = 'overflow-y-auto',
 }: ResponsiveDialogProps) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
 

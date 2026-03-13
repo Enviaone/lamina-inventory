@@ -12,7 +12,7 @@ export function RootLayout({ children }: { children: React.ReactNode }) {
       <SidebarInset>
         <AppHeader />
         <div className="flex flex-1 flex-col gap-4">
-          <main className="flex-1 p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6 bg-sidebar w-full overflow-x-hidden">
+          <main className="flex-1 p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6 bg-sidebar w-full">
             <PageTransition>{children}</PageTransition>
           </main>
         </div>
