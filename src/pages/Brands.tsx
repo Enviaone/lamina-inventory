@@ -36,9 +36,6 @@ export default function Brands() {
   const updateBrandMutation = useUpdateBrand();
   const deleteBrandMutation = useDeleteBrand();
 
-  const brandsArray = Array.isArray(brands)
-    ? brands
-    : (brands as unknown as { data: Brand[] })?.data || [];
 
   const handleSaveBrand = (data: BrandFormSchema) => {
     if (editTarget) {
@@ -111,7 +108,7 @@ export default function Brands() {
         <span className="text-sm text-muted-foreground whitespace-nowrap">
           {isLoading
             ? 'Loading...'
-            : `${brandsArray.length} brand${brandsArray.length !== 1 ? 's' : ''}`}
+            : `${brands.length} brand${brands.length !== 1 ? 's' : ''}`}
         </span>
       </div>
 
@@ -135,9 +132,9 @@ export default function Brands() {
             className="bg-transparent"
           />
         </div>
-      ) : brandsArray.length > 0 ? (
+      ) : brands.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {brandsArray.map((brand) => (
+          {brands.map((brand) => (
             <BrandCard
               key={brand.id}
               brand={brand}

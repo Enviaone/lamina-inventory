@@ -60,9 +60,6 @@ export default function BrandItemsPage() {
     );
   }
 
-  const itemsArray = Array.isArray(items)
-    ? (items as BrandItem[])
-    : (items as unknown as { data: BrandItem[] })?.data || [];
 
   const handleSaveItem = (data: BrandItemFormSchema) => {
     if (editTarget) {
@@ -136,7 +133,7 @@ export default function BrandItemsPage() {
               />
             </div>
             <span className="text-sm text-muted-foreground whitespace-nowrap">
-              {itemsArray.length} item{itemsArray.length !== 1 ? 's' : ''}
+              {items.length} item{items.length !== 1 ? 's' : ''}
             </span>
           </div>
 
@@ -150,9 +147,9 @@ export default function BrandItemsPage() {
                 {(error as Error)?.message || 'Something went wrong'}
               </p>
             </div>
-          ) : itemsArray.length > 0 ? (
+          ) : items.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {itemsArray.map((item) => (
+              {items.map((item) => (
                 <BrandItemCard
                   key={item.id}
                   item={item}
