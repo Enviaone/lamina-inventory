@@ -9,7 +9,7 @@ import { ApiError, type ApiErrorResponse } from '@/types/types';
 // Determine base URL based on environment
 // Default to production URL, override with VITE_API_BASE_URL if needed
 const getBaseURL = () => {
-  return import.meta.env.VITE_API_BASE_URL || '';
+  return import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api/v1';
 };
 
 // Create Axios instance with base configuration
