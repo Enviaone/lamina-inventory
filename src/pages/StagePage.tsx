@@ -51,6 +51,7 @@ import {
 import { useLocationsStore } from '@/store/locations-store';
 import { useLogStore, buildLogEntries } from '@/store/log-store';
 import { useAuthStore } from '@/store/auth-store';
+import { EmptyState } from '@/components/ui/empty';
 
 // Flatten brands → items into table rows
 function buildRows(brandId: string): FlatStageRow[] {
@@ -191,19 +192,16 @@ export default function StagePage() {
   if (!config) {
     return (
       <RootLayout>
-        <div className="flex flex-col items-center justify-center min-h-64 text-center gap-3">
-          <Package2 className="w-10 h-10 text-muted-foreground" />
-          <p className="font-medium text-foreground">Stage not found</p>
-          <p className="text-sm text-muted-foreground">
-            The stage{' '}
-            <code className="text-xs bg-muted px-1 py-0.5 rounded">
-              {stageSlug}
-            </code>{' '}
-            does not exist.
-          </p>
-          <Button variant="outline" onClick={() => navigate('/dashboard')}>
-            Go to Dashboard
-          </Button>
+        <div className="flex flex-col items-center justify-center h-[calc(100vh-100px)] text-center gap-3">
+          <EmptyState
+            title="Stage not found"
+            description="The stage you are looking for does not exist."
+            icons={[Package2]}
+            action={{
+              label: 'Go to Dashboard',
+              onClick: () => navigate('/dashboard'),
+            }}
+          />
         </div>
       </RootLayout>
     );
@@ -215,47 +213,7 @@ export default function StagePage() {
       <PageHeader
         title={config.label}
         description={config.description(selectedBrand.name)}
-      >
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="gap-2 shrink-0">
-              <div
-                className={`w-5 h-5 rounded-md ${colors.iconBg} flex items-center justify-center`}
-              >
-                <Package2 className={`w-3 h-3 ${colors.iconText}`} />
-              </div>
-              Change Brand
-              <ChevronDown className="w-4 h-4 text-muted-foreground" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            {MOCK_BRANDS.map((brand) => (
-              <DropdownMenuItem
-                key={brand.id}
-                className="gap-2 cursor-pointer"
-                onClick={() => handleBrandChange(brand.id)}
-              >
-                <div
-                  className="w-5 h-5 rounded-md bg-blue-100 flex items-center justify-center"
-                >
-                  <Package2
-                    className="w-3 h-3 text-blue-600"
-                  />
-                </div>
-                <span className="flex-1 truncate">{brand.name}</span>
-                {brand.id === selectedBrandId && (
-                  <Badge
-                    variant="secondary"
-                    className="text-[10px] px-1.5 py-0 h-4"
-                  >
-                    Active
-                  </Badge>
-                )}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </PageHeader>
+      />
 
       {/* ── Brand context card (with optional stage selector) ── */}
       <div
@@ -278,35 +236,48 @@ export default function StagePage() {
           </div>
         </div>
 
-        {/* Stage selector — only for Hardness Inspection */}
-        {config.showStageSelector && (
-          <>
-            <div className="h-8 w-px bg-border/60 shrink-0 mx-1" />
-            <div className="flex items-center gap-3 min-w-0 flex-wrap">
-              <Select
-                value={selectedStageId}
-                onValueChange={setSelectedStageId}
+        {/* Brand selector */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="gap-2 shrink-0">
+              <div
+                className={`w-5 h-5 rounded-md ${colors.iconBg} flex items-center justify-center`}
               >
-                <SelectTrigger className="w-48 h-8 text-xs shrink-0">
-                  <SelectValue placeholder="Select stage" />
-                </SelectTrigger>
-                <SelectContent>
-                  {STAGE_OPTIONS.map((s) => (
-                    <SelectItem key={s.id} value={s.id} className="text-xs">
-                      {s.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </>
-        )}
+                <Package2 className={`w-3 h-3 ${colors.iconText}`} />
+              </div>
+              Change Brand
+              <ChevronDown className="w-4 h-4 text-muted-foreground" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            {MOCK_BRANDS.map((brand) => (
+              <DropdownMenuItem
+                key={brand.id}
+                className="gap-2 cursor-pointer"
+                onClick={() => handleBrandChange(brand.id)}
+              >
+                <div className="w-5 h-5 rounded-md bg-blue-100 flex items-center justify-center">
+                  <Package2 className="w-3 h-3 text-blue-600" />
+                </div>
+                <span className="flex-1 truncate">{brand.name}</span>
+                {brand.id === selectedBrandId && (
+                  <Badge
+                    variant="secondary"
+                    className="text-[10px] px-1.5 py-0 h-4"
+                  >
+                    Active
+                  </Badge>
+                )}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* ── Table card (toolbar header + table) ── */}
       <div className="rounded-2xl border border-border bg-card">
-        {/* Toolbar row */}
-        <div className="sticky top-0 z-20 bg-card flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-3 border-b border-border rounded-t-2xl shadow-sm sm:shadow-none">
+        {/* Toolbar row - Sticky at top of viewport */}
+        <div className="sticky top-0 z-30 bg-card flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-3 rounded-t-2xl shadow-sm backdrop-blur-sm">
           <div className="relative flex-1 w-full">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
             <Input
@@ -321,25 +292,51 @@ export default function StagePage() {
           <div className="sm:hidden h-px w-full bg-border shrink-0" />
 
           <div className="flex items-center justify-between sm:justify-start gap-3 w-full sm:w-auto px-2 sm:px-0">
-            {/* Date */}
-            <div className="flex items-center gap-1.5 text-sm text-muted-foreground shrink-0">
-              <CalendarDays className="w-4 h-4" />
-              <span>{today}</span>
+            <div className="flex gap-4">
+              {/* Date */}
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground shrink-0">
+                <CalendarDays className="w-4 h-4" />
+                <span className="font-xs">{today}</span>
+              </div>
+
+              {/* Shift */}
+              <Select value={selectedShift} onValueChange={setSelectedShift}>
+                <SelectTrigger className="w-18 h-9 text-sm shadow-none bg-transparent focus:ring-0">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {['S1', 'S2', 'S3', 'S4'].map((s) => (
+                    <SelectItem key={s} value={s} className="text-sm">
+                      {s}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
-            {/* Shift */}
-            <Select value={selectedShift} onValueChange={setSelectedShift}>
-              <SelectTrigger className="w-24 h-9 text-sm shadow-none bg-transparent focus:ring-0">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {['S1', 'S2', 'S3', 'S4'].map((s) => (
-                  <SelectItem key={s} value={s} className="text-sm">
-                    {s}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {/* Stage selector — only for Hardness Inspection */}
+            {config.showStageSelector && (
+              <>
+                <div className="h-5 w-px bg-border/60 shrink-0 mx-1" />
+                <div className="flex items-center gap-3 min-w-0 flex-wrap">
+                  <Select
+                    value={selectedStageId}
+                    onValueChange={setSelectedStageId}
+                  >
+                    <SelectTrigger className="w-auto h-9 text-sm shadow-none bg-transparent focus:ring-0">
+                      <SelectValue placeholder="Select stage" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {STAGE_OPTIONS.map((s) => (
+                        <SelectItem key={s.id} value={s.id} className="text-sm">
+                          {s.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
+            )}
 
             <div className="hidden sm:block h-5 w-px bg-border shrink-0" />
 
