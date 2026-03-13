@@ -17,5 +17,4 @@ export interface FlatStageRow {
   brandName: string;
   itemId: string;
   itemName: string;
-  currentStock: number;
 }

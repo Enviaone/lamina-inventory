@@ -7,10 +7,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  BRAND_COLOR_MAP,
-  type BrandColorKey,
-} from '@/features/brands/constants/colorMap';
 import { type Brand, type BrandItem } from '@/types/brand';
 
 interface BrandItemCardProps {
@@ -22,22 +18,17 @@ interface BrandItemCardProps {
 
 export function BrandItemCard({
   item,
-  brand,
   onEdit,
   onDelete,
 }: BrandItemCardProps) {
-  const colorKey: BrandColorKey =
-    brand.color in BRAND_COLOR_MAP ? (brand.color as BrandColorKey) : 'blue';
-  const colors = BRAND_COLOR_MAP[colorKey];
-
   return (
     <div className="flex items-center justify-between p-4 border border-border rounded-xl bg-card hover:bg-muted/30 transition-colors">
       <div className="flex items-center gap-4">
-        {/* Colored icon */}
+        {/* Neutral colored icon */}
         <div
-          className={`w-11 h-11 rounded-[14px] ${colors.iconBg} flex items-center justify-center shrink-0`}
+          className="w-11 h-11 rounded-[14px] bg-blue-100 flex items-center justify-center shrink-0"
         >
-          <Package2 className={`w-5 h-5 ${colors.iconText}`} />
+          <Package2 className="w-5 h-5 text-blue-600" />
         </div>
 
         {/* Info */}

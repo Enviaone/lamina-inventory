@@ -37,7 +37,6 @@ import {
   emptyRowState,
 } from '@/features/stages/types';
 import { BRAND_COLOR_MAP } from '@/features/brands/constants/colorMap';
-import type { BrandColorKey } from '@/features/brands/constants/colorMap';
 import {
   Select,
   SelectContent,
@@ -62,7 +61,6 @@ function buildRows(brandId: string): FlatStageRow[] {
     brandName: brand.name,
     itemId: item.id,
     itemName: item.name,
-    currentStock: item.currentStock,
   }));
 }
 
@@ -96,11 +94,8 @@ export default function StagePage() {
 
   const selectedBrand =
     MOCK_BRANDS.find((b) => b.id === selectedBrandId) ?? MOCK_BRANDS[0];
-  const colorKey =
-    (selectedBrand.color as BrandColorKey) in BRAND_COLOR_MAP
-      ? (selectedBrand.color as BrandColorKey)
-      : 'blue';
-  const colors = BRAND_COLOR_MAP[colorKey];
+
+  const colors = BRAND_COLOR_MAP.blue;
   const rows = buildRows(selectedBrandId);
 
   // ── Lifted row state ───────────────────────────────────────────────────────
@@ -241,10 +236,10 @@ export default function StagePage() {
                 onClick={() => handleBrandChange(brand.id)}
               >
                 <div
-                  className={`w-5 h-5 rounded-md ${BRAND_COLOR_MAP[brand.color as BrandColorKey]?.iconBg ?? 'bg-blue-100'} flex items-center justify-center`}
+                  className="w-5 h-5 rounded-md bg-blue-100 flex items-center justify-center"
                 >
                   <Package2
-                    className={`w-3 h-3 ${BRAND_COLOR_MAP[brand.color as BrandColorKey]?.iconText ?? 'text-blue-600'}`}
+                    className="w-3 h-3 text-blue-600"
                   />
                 </div>
                 <span className="flex-1 truncate">{brand.name}</span>

@@ -1,26 +1,15 @@
 import { useEffect } from 'react';
 import { useForm, Controller, type UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Package2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form } from '@/components/ui/form';
 import { Field, FieldLabel, FieldError } from '@/components/ui/field';
 import { ResponsiveDialog } from '@/components/shared/ResponsiveDialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 
 import { brandFormSchema, type BrandFormSchema } from '@/schema/brand.schema';
-import {
-  BRAND_COLOR_MAP,
-  type BrandColorKey,
-} from '@/features/brands/constants/colorMap';
 import type { Brand } from '@/types/brand';
 
 export interface BrandFormDialogProps {
@@ -28,6 +17,7 @@ export interface BrandFormDialogProps {
   onOpenChange: (open: boolean) => void;
   initial?: Brand;
   onSave: (data: BrandFormSchema) => void;
+  isSubmitting?: boolean;
 }
 
 export function BrandFormDialog({
@@ -35,6 +25,7 @@ export function BrandFormDialog({
   onOpenChange,
   initial,
   onSave,
+  isSubmitting,
 }: BrandFormDialogProps) {
   const isEdit = !!initial;
 
@@ -42,8 +33,6 @@ export function BrandFormDialog({
     resolver: zodResolver(brandFormSchema),
     defaultValues: {
       name: '',
-      code: '',
-      color: 'blue',
     },
   });
 
@@ -53,14 +42,10 @@ export function BrandFormDialog({
       if (initial) {
         form.reset({
           name: initial.name,
-          code: initial.code,
-          color: initial.color as BrandColorKey,
         });
       } else {
         form.reset({
           name: '',
-          code: '',
-          color: 'blue',
         });
       }
     }
@@ -68,7 +53,6 @@ export function BrandFormDialog({
 
   const onSubmit = (data: BrandFormSchema) => {
     onSave(data);
-    onOpenChange(false);
   };
 
   return (
@@ -87,6 +71,7 @@ export function BrandFormDialog({
         onSubmit={onSubmit}
         isEdit={isEdit}
         onCancel={() => onOpenChange(false)}
+        isSubmitting={isSubmitting}
       />
     </ResponsiveDialog>
   );
@@ -97,11 +82,13 @@ function BrandFormInputs({
   onSubmit,
   isEdit,
   onCancel,
+  isSubmitting,
 }: {
   form: UseFormReturn<BrandFormSchema>;
   onSubmit: (data: BrandFormSchema) => void;
   isEdit: boolean;
   onCancel: () => void;
+  isSubmitting?: boolean;
 }) {
   return (
     <Form {...form}>
@@ -116,65 +103,8 @@ function BrandFormInputs({
                 id="brand-name"
                 placeholder="e.g. Ashok Leyland"
                 {...field}
+                disabled={isSubmitting}
               />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-
-        <Controller
-          control={form.control}
-          name="code"
-          render={({ field, fieldState }) => (
-            <Field className="gap-2">
-              <FieldLabel htmlFor="brand-code">Brand Code</FieldLabel>
-              <Input
-                id="brand-code"
-                placeholder="e.g. AL-001"
-                className="uppercase"
-                {...field}
-                onChange={(e) => field.onChange(e.target.value.toUpperCase())}
-              />
-              <p className="text-xs text-muted-foreground">
-                Must be uppercase letters, numbers, or hyphens.
-              </p>
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-
-        <Controller
-          control={form.control}
-          name="color"
-          render={({ field, fieldState }) => (
-            <Field className="gap-2">
-              <FieldLabel htmlFor="brand-color">Brand Color</FieldLabel>
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger id="brand-color">
-                  <SelectValue placeholder="Select a color" />
-                </SelectTrigger>
-                <SelectContent>
-                  {(Object.keys(BRAND_COLOR_MAP) as BrandColorKey[]).map(
-                    (colorKey) => {
-                      const colors = BRAND_COLOR_MAP[colorKey];
-                      return (
-                        <SelectItem key={colorKey} value={colorKey}>
-                          <div className="flex items-center gap-2">
-                            <div
-                              className={`w-6 h-6 rounded-md ${colors.iconBg} flex items-center justify-center`}
-                            >
-                              <Package2
-                                className={`w-3.5 h-3.5 ${colors.iconText}`}
-                              />
-                            </div>
-                            <span className="capitalize">{colorKey}</span>
-                          </div>
-                        </SelectItem>
-                      );
-                    },
-                  )}
-                </SelectContent>
-              </Select>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
@@ -186,10 +116,22 @@ function BrandFormInputs({
             variant="outline"
             className="mt-2 sm:mt-0"
             onClick={onCancel}
+            disabled={isSubmitting}
           >
             Cancel
           </Button>
-          <Button type="submit">{isEdit ? 'Save Changes' : 'Add Brand'}</Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : isEdit ? (
+              'Save Changes'
+            ) : (
+              'Add Brand'
+            )}
+          </Button>
         </div>
       </form>
     </Form>

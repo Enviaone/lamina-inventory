@@ -8,10 +8,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  BRAND_COLOR_MAP,
-  type BrandColorKey,
-} from '@/features/brands/constants/colorMap';
 import { type Brand } from '@/types/brand';
 
 interface BrandCardProps {
@@ -22,28 +18,24 @@ interface BrandCardProps {
 
 export function BrandCard({ brand, onEdit, onDelete }: BrandCardProps) {
   const navigate = useNavigate();
-  const colorKey: BrandColorKey =
-    brand.color in BRAND_COLOR_MAP ? (brand.color as BrandColorKey) : 'blue';
-  const colors = BRAND_COLOR_MAP[colorKey];
 
   return (
     <div
-      className="bg-card border border-border rounded-2xl p-5 flex flex-col gap-4 hover:shadow-md transition-shadow cursor-pointer"
+      className="bg-card border border-border rounded-2xl p-5 flex flex-col gap-4 hover:shadow-md transition-shadow cursor-pointer hover:ring-2 hover:ring-primary/10"
       onClick={() => navigate(`/brands/${brand.id}`)}
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-3">
           <div
-            className={`w-10 h-10 rounded-xl ${colors.iconBg} flex items-center justify-center shrink-0`}
+            className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0"
           >
-            <Package2 className={`w-5 h-5 ${colors.iconText}`} />
+            <Package2 className="w-5 h-5 text-primary" />
           </div>
           <div>
             <p className="font-semibold text-foreground text-sm leading-tight">
               {brand.name}
             </p>
-            <p className="text-xs text-muted-foreground mt-0.5">{brand.code}</p>
           </div>
         </div>
 
