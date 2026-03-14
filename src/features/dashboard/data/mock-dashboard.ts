@@ -8,15 +8,15 @@ export interface StageStat {
   input: number;
   output: number;
   rejections: number;
-  status: 'done' | 'partial' | 'pending';
+  status: 'done' | 'partial' | 'pending' | 'rejected';
 }
 
 export const PIPELINE_STATS: StageStat[] = [
-  { stageId: 'MELTING',             label: 'Melting',             input: 0,     output: 8420,  rejections: 0,   status: 'done'    },
-  { stageId: 'SHOT_BLAST',          label: 'Shot Blast',          input: 8420,  output: 8180,  rejections: 0,   status: 'done'    },
-  { stageId: 'PROOF_MACHINES',      label: 'Proof Machines',      input: 7200,  output: 5400,  rejections: 0,   status: 'partial' },
-  { stageId: 'CNC',                 label: 'CNC',                 input: 0,     output: 0,     rejections: 0,   status: 'pending' },
-  { stageId: 'HARDNESS_INSPECTION', label: 'Inspection', input: 0,     output: 0,     rejections: 0,   status: 'pending' },
+  { stageId: 'MELTING',             label: 'Melting',             input: 12500, output: 12420, rejections: 80,  status: 'done'    },
+  { stageId: 'SHOT_BLAST',          label: 'Shot Blast',          input: 12420, output: 12350, rejections: 70,  status: 'done'    },
+  { stageId: 'PROOF_MACHINES',      label: 'Proof Machines',      input: 12350, output: 11200, rejections: 150, status: 'done'    },
+  { stageId: 'CNC',                 label: 'CNC',                 input: 11200, output: 9800,  rejections: 420, status: 'partial' },
+  { stageId: 'HARDNESS_INSPECTION', label: 'Inspection',          input: 9800,  output: 0,      rejections: 9800, status: 'rejected' },
   { stageId: 'BALANCING',           label: 'Balancing',           input: 0,     output: 0,     rejections: 0,   status: 'pending' },
   { stageId: 'PACKAGING',           label: 'Packaging',           input: 0,     output: 0,     rejections: 0,   status: 'pending' },
 ];
@@ -44,7 +44,6 @@ export const RECENT_ACTIVITY: ActivityEntry[] = [
 const allItems = MOCK_BRANDS.flatMap((b) => b.items);
 export const TOTAL_BRANDS  = MOCK_BRANDS.length;
 export const TOTAL_ITEMS   = allItems.length;
-export const TOTAL_STOCK   = allItems.reduce((s, i) => s + i.currentStock, 0);
 
 
 export const TOTAL_UNITS_TODAY = PIPELINE_STATS.reduce((s, p) => s + p.output, 0);
