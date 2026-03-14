@@ -112,7 +112,7 @@ export function UserFormDialog({
       }
       desktopClassName="max-w-md"
     >
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} className="p-4 sm:p-0">
         <UserFormInputs
           register={register}
           roles={roles as UserRole[]}
@@ -206,7 +206,7 @@ function UserFormInputs({
       <div className="flex flex-col gap-1.5 min-w-0">
         <Label>Roles</Label>
         <DropdownMenu>
-          <DropdownMenuTrigger className="max-w-xs" asChild>
+          <DropdownMenuTrigger className="w-full" asChild>
             <Button
               variant="outline"
               type="button"
