@@ -193,8 +193,7 @@ export default function LogPage() {
           </div>
         ) : (
           <>
-            {/* Column Headers - Sticky below toolbar (toolbar height ~61px) */}
-            <div className="sticky top-[108px] sm:top-[61px] z-10 hidden sm:flex items-center px-5 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wide border-b border-border bg-muted/90 backdrop-blur-sm">
+            <div className="sticky top-27 sm:top-15.25 z-10 hidden sm:flex items-center px-5 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wide border-b border-border bg-muted/90 backdrop-blur-sm">
               <div className="w-[30%]">Item & Brand</div>
               <div className="hidden sm:block w-[15%]">Stage</div>
               <div className="hidden md:block w-[15%]">Inputs</div>
