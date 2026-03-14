@@ -72,6 +72,7 @@ export function EditLogDialog({
       open={!!entry}
       onOpenChange={handleOpen}
       title="Edit Log Entry"
+      drawerClassName="p-4"
     >
       {currentEntry ? (
         <EditLogInputs
@@ -119,62 +120,63 @@ function EditLogInputs({
 }) {
   return (
     <>
-      <div className="mt-2 flex items-center gap-3 p-3 rounded-lg bg-muted/40 border border-border">
-        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-          <Package2 className="w-4 h-4 text-primary" />
+      <div className="flex items-center justify-between gap-3 p-3 rounded-lg bg-muted/40 border border-border">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+            <Package2 className="w-4 h-4 text-primary" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-foreground">
+              {entry.itemName}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {entry.brandName} · {entry.stageLabel}
+            </p>
+          </div>
         </div>
-        <div>
-          <p className="text-sm font-medium text-foreground">
-            {entry.itemName}
-          </p>
-          <p className="text-xs text-muted-foreground">
-            {entry.brandName} · {entry.stageLabel}
-          </p>
-        </div>
+
+        <Select value={shift} onValueChange={setShift}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {['S1', 'S2', 'S3', 'S4'].map((s) => (
+              <SelectItem key={s} value={s}>
+                {s}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="space-y-3 py-4">
-        <div className="flex flex-col gap-1.5">
-          <Label>Shift</Label>
-          <Select value={shift} onValueChange={setShift}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {['S1', 'S2', 'S3', 'S4'].map((s) => (
-                <SelectItem key={s} value={s}>
-                  {s}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="grid grid-cols-2 gap-2">
+          {entry.data.inputQty !== '' && (
+            <div className="flex flex-col gap-1.5">
+              <Label>Input Qty</Label>
+              <Input
+                type="number"
+                min={0}
+                value={inputQty}
+                onChange={(e) => setInputQty(e.target.value)}
+                placeholder="—"
+              />
+            </div>
+          )}
+
+          {entry.data.productionQty !== '' && (
+            <div className="flex flex-col gap-1.5">
+              <Label>Production Qty</Label>
+              <Input
+                type="number"
+                min={0}
+                value={productionQty}
+                onChange={(e) => setProdQty(e.target.value)}
+                placeholder="—"
+              />
+            </div>
+          )}
         </div>
-
-        {entry.data.inputQty !== '' && (
-          <div className="flex flex-col gap-1.5">
-            <Label>Input Qty</Label>
-            <Input
-              type="number"
-              min={0}
-              value={inputQty}
-              onChange={(e) => setInputQty(e.target.value)}
-              placeholder="—"
-            />
-          </div>
-        )}
-
-        {entry.data.productionQty !== '' && (
-          <div className="flex flex-col gap-1.5">
-            <Label>Production Qty</Label>
-            <Input
-              type="number"
-              min={0}
-              value={productionQty}
-              onChange={(e) => setProdQty(e.target.value)}
-              placeholder="—"
-            />
-          </div>
-        )}
 
         {entry.data.rejectionQty !== '' && (
           <div className="flex flex-col gap-1.5">

@@ -35,7 +35,7 @@ export function primaryQty(entry: LogEntry): {
   if (entry.data.productionQty) {
     return {
       value: entry.data.productionQty,
-      label: 'Units produced',
+      label: 'Produced units',
       sub: entry.data.inputQty ? `(Input: ${entry.data.inputQty} units)` : undefined,
     };
   }
