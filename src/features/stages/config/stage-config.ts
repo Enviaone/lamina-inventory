@@ -50,7 +50,7 @@ export const STAGE_CONFIG: Record<StageId, StageConfig> = {
     label: 'Melting',
     description: (b) => `Record production quantities for the melting stage — ${b}`,
     columns: [
-      { key: 'productionQty', header: 'Production Qty', placeholder: 'Enter qty' },
+      { key: 'inputQty', header: 'Intake Quantity', placeholder: 'Enter intake qty' },
     ],
   },
   SHOT_BLAST: {
@@ -58,8 +58,8 @@ export const STAGE_CONFIG: Record<StageId, StageConfig> = {
     label: 'Shot Blast',
     description: (b) => `Enter input and production quantities for shot blast — ${b}`,
     columns: [
-      { key: 'inputQty',      header: 'Intake Qty',      placeholder: 'Enter intake qty' },
-      { key: 'productionQty', header: 'Production Qty', placeholder: 'Enter production qty' },
+      { key: 'inputQty',      header: 'Intake Quantity',      placeholder: 'Enter intake qty' },
+      { key: 'productionQty', header: 'Production Quantity', placeholder: 'Enter production qty' },
       { key: 'location',      header: 'Destination',    placeholder: 'Select destination' },
     ],
     validatePrevStage: true,
@@ -71,8 +71,8 @@ export const STAGE_CONFIG: Record<StageId, StageConfig> = {
     label: 'Proof Machines',
     description: (b) => `Enter input and output quantities for proof machines — ${b}`,
     columns: [
-      { key: 'inputQty',      header: 'Intake Qty',  placeholder: 'Enter intake qty' },
-      { key: 'productionQty', header: 'Production Qty', placeholder: 'Enter production qty' },
+      { key: 'inputQty',      header: 'Intake Quantity',  placeholder: 'Enter intake qty' },
+      { key: 'productionQty', header: 'Production Quantity', placeholder: 'Enter production qty' },
     ],
   },
   CNC: {
@@ -80,8 +80,8 @@ export const STAGE_CONFIG: Record<StageId, StageConfig> = {
     label: 'CNC',
     description: (b) => `Enter input and output quantities for CNC processing — ${b}`,
     columns: [
-      { key: 'inputQty',      header: 'Intake Qty',  placeholder: 'Enter intake qty' },
-      { key: 'productionQty', header: 'Production Qty', placeholder: 'Enter production qty' },
+      { key: 'inputQty',      header: 'Intake Quantity',  placeholder: 'Enter intake qty' },
+      { key: 'productionQty', header: 'Production Quantity', placeholder: 'Enter production qty' },
     ],
   },
   HARDNESS_INSPECTION: {
@@ -89,7 +89,7 @@ export const STAGE_CONFIG: Record<StageId, StageConfig> = {
     label: 'Inspection',
     description: (b) => `Select source stage and enter rejection quantities for hardness testing — ${b}`,
     columns: [
-      { key: 'rejectionQty', header: 'Rejection Qty', placeholder: 'Enter rejection qty' },
+      { key: 'rejectionQty', header: 'Rejection Quantity', placeholder: 'Enter rejection qty' },
     ],
     showStageSelector: true,
   },
@@ -98,8 +98,8 @@ export const STAGE_CONFIG: Record<StageId, StageConfig> = {
     label: 'Balancing',
     description: (b) => `Enter input and output quantities for balancing — ${b}`,
     columns: [
-      { key: 'inputQty',      header: 'Intake Qty',  placeholder: 'Enter intake qty' },
-      { key: 'productionQty', header: 'Production Qty', placeholder: 'Enter production qty' },
+      { key: 'inputQty',      header: 'Intake Quantity',  placeholder: 'Enter intake qty' },
+      { key: 'productionQty', header: 'Production Quantity', placeholder: 'Enter production qty' },
     ],
   },
 
@@ -109,8 +109,8 @@ export const STAGE_CONFIG: Record<StageId, StageConfig> = {
     description: (b) => `Enter source location, input and output quantities for packaging — ${b}`,
     columns: [
       { key: 'location',      header: 'Source Location', placeholder: 'Select source' },
-      { key: 'inputQty',      header: 'Intake Qty',       placeholder: 'Enter intake qty' },
-      { key: 'productionQty', header: 'Production Qty',      placeholder: 'Enter production qty' },
+      { key: 'inputQty',      header: 'Intake Quantity',       placeholder: 'Enter intake qty' },
+      { key: 'productionQty', header: 'Production Quantity',      placeholder: 'Enter production qty' },
     ],
     locationDirection: 'source',
   },
