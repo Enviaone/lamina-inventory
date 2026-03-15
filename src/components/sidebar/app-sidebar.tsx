@@ -20,7 +20,7 @@ import { getNavItemsForRoles } from '@/constants/nav-items';
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuthStore();
 
-  const navItems = user ? getNavItemsForRoles(user.roles ?? [user.role]) : [];
+  const navGroups = user ? getNavItemsForRoles(user.roles ?? [user.role]) : [];
 
   const sidebarUser = {
     name: user?.name ?? 'Guest',
@@ -56,7 +56,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
 
       <SidebarContent>
-        <NavMain items={navItems} />
+        <NavMain groups={navGroups} />
       </SidebarContent>
 
       <SidebarFooter>

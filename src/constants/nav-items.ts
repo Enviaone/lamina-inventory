@@ -9,7 +9,6 @@ import {
   Microscope,
   Scale,
   Archive,
-  Factory,
   MapPin,
   ClipboardList,
   UsersRound,
@@ -28,6 +27,11 @@ export interface NavItem {
   url: string;
   icon: LucideIcon;
   children?: NavChild[];
+}
+
+export interface NavGroup {
+  label: string;
+  items: NavItem[];
 }
 
 // ─── Leaf routes ─────────────────────────────────────────────────────────────
@@ -51,43 +55,58 @@ const ALL_STAGE_CHILDREN: NavChild[] = [
   { title: 'Packaging',           url: '/stages/packaging',           icon: Archive       },
 ];
 
-// Parent nav item that groups all stages as a collapsible submenu (Admin only)
-const stagesGroup: NavItem = {
-  title: 'Manufacturing',
-  url: '/stages',
-  icon: Factory,
-  children: ALL_STAGE_CHILDREN,
+// Map StageId to the corresponding navigation item
+const stageItemMap: Record<string, NavItem> = {
+  MELTING: { title: 'Melting', url: '/stages/melting', icon: Flame },
+  SHOT_BLAST: { title: 'Shot Blast', url: '/stages/shot-blast', icon: Wind },
+  PROOF_MACHINES: { title: 'Proof Machines', url: '/stages/proof-machines', icon: Gauge },
+  CNC: { title: 'CNC', url: '/stages/cnc', icon: Cpu },
+  HARDNESS_INSPECTION: { title: 'Inspection', url: '/stages/hardness-inspection', icon: Microscope },
+  BALANCING: { title: 'Balancing', url: '/stages/balancing', icon: Scale },
+  PACKAGING: { title: 'Packaging', url: '/stages/packaging', icon: Archive },
 };
 
-// Flat map for stage-role users (one stage per user)
-const stageItemMap: Record<string, NavItem> = Object.fromEntries(
-  ALL_STAGE_CHILDREN.map((child) => {
-    const key = child.title
-      .toUpperCase()
-      .replace(/ /g, '_');
-    return [key, { title: child.title, url: child.url, icon: child.icon }];
-  })
-);
-
-// Override keys that don't match the enum exactly
-stageItemMap['SHOT_BLAST']          = ALL_STAGE_CHILDREN.find((c) => c.url.includes('/stages/shot-blast'))!;
-stageItemMap['PROOF_MACHINES']      = ALL_STAGE_CHILDREN.find((c) => c.url.includes('/stages/proof-machines'))!;
-stageItemMap['HARDNESS_INSPECTION'] = ALL_STAGE_CHILDREN.find((c) => c.url.includes('/stages/hardness-inspection'))!;
-
-export function getNavItemsForRole(role: UserRole): NavItem[] {
+export function getNavItemsForRole(role: UserRole): NavGroup[] {
   return getNavItemsForRoles([role]);
 }
 
-export function getNavItemsForRoles(roles: UserRole[]): NavItem[] {
-  // Admin is exclusive — never mixed
-  if (roles.includes('ADMIN')) {
-    return [dashboard, brands, stagesGroup, locations, reports, users, logs];
+export function getNavItemsForRoles(roles: UserRole[]): NavGroup[] {
+  const isAdmin = roles.includes('ADMIN');
+
+  if (isAdmin) {
+    return [
+      {
+        label: 'OVERVIEW',
+        items: [
+          { ...dashboard },
+          { ...brands },
+        ],
+      },
+      {
+        label: 'STAGES',
+        items: ALL_STAGE_CHILDREN.map((child) => ({
+          title: child.title,
+          url: child.url,
+          icon: child.icon,
+        })),
+      },
+      {
+        label: 'ADMIN',
+        items: [users, locations, reports, logs],
+      },
+    ];
   }
 
-  // Collect all stage nav items for each role, deduped by url
-  const seen = new Set<string>();
+  // Stage-specific roles
   const stageItems: NavItem[] = [];
-  for (const role of roles) {
+  const seen = new Set<string>();
+
+  // Rule: If user has SHOT_BLAST role, exclude MELTING navigation
+  const refinedRoles = roles.includes('SHOT_BLAST')
+    ? roles.filter(r => r !== 'MELTING')
+    : roles;
+
+  for (const role of refinedRoles) {
     const item = stageItemMap[role];
     if (item && !seen.has(item.url)) {
       seen.add(item.url);
@@ -95,5 +114,14 @@ export function getNavItemsForRoles(roles: UserRole[]): NavItem[] {
     }
   }
 
-  return [dashboard, ...stageItems, logs];
+  return [
+    {
+      label: 'OVERVIEW',
+      items: [dashboard, logs],
+    },
+    {
+      label: 'MY STAGES',
+      items: stageItems,
+    },
+  ];
 }
