@@ -16,12 +16,9 @@ import type { StageId } from '@/types/manufacturing';
 import {
   OPERATOR_STATS,
   PIPELINE_STATS,
-  PENDING_BRANDS,
 } from '@/features/dashboard/data/mock-dashboard';
-import {
-  SLUG_TO_STAGE_ID,
-  STAGE_CONFIG,
-} from '@/features/stages/config/stage-config';
+import { MyRecentSubmissions } from '@/features/dashboard/components/MyRecentSubmissions';
+import { SLUG_TO_STAGE_ID } from '@/features/stages/config/stage-config';
 
 // Reverse map: StageId → slug
 const STAGE_TO_SLUG = Object.fromEntries(
@@ -41,7 +38,6 @@ export function OperatorDashboard({ user }: OperatorDashboardProps) {
     rejections: 0,
   };
   const pipeline = PIPELINE_STATS.find((p) => p.stageId === stageId);
-  const config = STAGE_CONFIG[stageId];
   const stageSlug = STAGE_TO_SLUG[stageId];
   const today = format(new Date(), 'EEEE, MMMM do');
 
@@ -122,51 +118,9 @@ export function OperatorDashboard({ user }: OperatorDashboardProps) {
         />
       </KpiCardGroup>
 
-      {/* Pending brands + recent activity */}
+      {/* My submissions + recent activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Pending brands */}
-        <div className="rounded-2xl border bg-card p-5 flex flex-col gap-4">
-          <div>
-            <h2 className="font-semibold text-foreground text-base">
-              Pending Brands
-            </h2>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Brands not yet recorded today for {config?.label}
-            </p>
-          </div>
-          {PENDING_BRANDS.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-4 text-center">
-              ✅ All brands recorded for today
-            </p>
-          ) : (
-            <div className="flex flex-col gap-2">
-              {PENDING_BRANDS.map((brand) => (
-                <div
-                  key={brand.id}
-                  className="flex items-center justify-between p-3 rounded-xl bg-muted/40 border border-border hover:bg-muted/60 transition-colors"
-                >
-                  <div>
-                    <p className="text-sm font-medium text-foreground">
-                      {brand.name}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {brand.items.length} items pending
-                    </p>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="gap-1 text-xs h-7"
-                    onClick={() => navigate(`/stages/${stageSlug}`)}
-                  >
-                    Record <ArrowRight className="w-3 h-3" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
+        <MyRecentSubmissions userId={user.id} />
         <RecentActivity />
       </div>
     </div>
