@@ -1,9 +1,8 @@
 import { Activity, TrendingUp, BarChart3, Star } from 'lucide-react';
 import { KpiCard, KpiCardGroup } from '@/features/dashboard/components/KpiCard';
 import { StagePipeline } from '@/features/dashboard/components/StagePipeline';
-import { PendingTasksWidget } from '@/features/dashboard/components/PendingTasksWidget';
 import { RecentActivity } from '@/features/dashboard/components/RecentActivity';
-import { BrandPerformance } from '@/features/dashboard/components/BrandPerformance';
+import { TodaysRejection } from '@/features/dashboard/components/TodaysRejection';
 import { format } from 'date-fns';
 import { useLogStore } from '@/store/log-store';
 
@@ -138,13 +137,10 @@ export function AdminDashboard() {
 
       {/* Bottom row: Traffic + Insights + Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-6 gap-4">
-        <div className="lg:col-span-2">
-          <PendingTasksWidget />
+        <div className="lg:col-span-3">
+          <TodaysRejection />
         </div>
-        <div className="lg:col-span-2">
-          <BrandPerformance />
-        </div>
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-3">
           <RecentActivity />
         </div>
       </div>

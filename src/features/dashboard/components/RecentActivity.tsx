@@ -106,7 +106,7 @@ export function RecentActivity() {
                       >
                         {qty ? parseInt(qty).toLocaleString('en-IN') : '—'}
                         <span className="text-[10px] font-normal text-muted-foreground ml-0.5">
-                          pcs
+                          units
                         </span>
                       </p>
                       <p className="text-[10px] text-muted-foreground mt-1">
