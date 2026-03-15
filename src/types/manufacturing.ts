@@ -1,3 +1,5 @@
+import { Archive, Cpu, Flame, Gauge, Microscope, Scale, Wind, type LucideIcon } from "lucide-react";
+
 export type StageId =
   | 'MELTING'
   | 'SHOT_BLAST'
@@ -31,12 +33,12 @@ export interface ProcessLog {
   timestamp: string;
 }
 
-export const STAGES: { id: StageId; label: string; order: number }[] = [
-  { id: 'MELTING', label: 'Melting', order: 1 },
-  { id: 'SHOT_BLAST', label: 'Shot Blast', order: 2 },
-  { id: 'PROOF_MACHINES', label: 'Proof Machines', order: 3 },
-  { id: 'CNC', label: 'CNC', order: 4 },
-  { id: 'HARDNESS_INSPECTION', label: 'Inspection', order: 5 },
-  { id: 'BALANCING', label: 'Balancing', order: 6 },
-  { id: 'PACKAGING', label: 'Packaging', order: 7 },
+export const STAGES: { id: StageId; label: string; order: number; icon: LucideIcon}[] = [
+  { id: 'MELTING', label: 'Melting', order: 1, icon: Flame},
+  { id: 'SHOT_BLAST', label: 'Shot Blast', order: 2, icon: Wind },
+  { id: 'PROOF_MACHINES', label: 'Proof Machines', order: 3, icon: Gauge },
+  { id: 'CNC', label: 'CNC', order: 4, icon: Cpu},
+  { id: 'HARDNESS_INSPECTION', label: 'Inspection', order: 5, icon: Microscope },
+  { id: 'BALANCING', label: 'Balancing', order: 6, icon: Scale },
+  { id: 'PACKAGING', label: 'Packaging', order: 7, icon: Archive },
 ];
