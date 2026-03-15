@@ -39,7 +39,7 @@ export function TodaysRejection() {
   const maxRejections = Math.max(...statsList.map((s) => s.rejections), 1);
 
   return (
-    <div className="rounded-2xl border bg-card p-5 flex flex-col gap-4 h-full shadow-none transition-all hover:shadow-sm">
+    <div className="rounded-2xl border bg-card p-5 flex flex-col gap-4 h-full transition-all">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div>
@@ -69,12 +69,12 @@ export function TodaysRejection() {
             <div key={stage.name} className="space-y-2 group">
               <div className="flex items-center justify-between gap-4">
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate group-hover:text-rose-600 transition-colors pr-2 uppercase tracking-tight">
+                  <p className="text-sm font-medium text-foreground truncate transition-colors pr-2">
                     {stage.name}
                   </p>
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className="text-[10px] text-rose-600 font-bold bg-rose-50 dark:bg-rose-900/30 px-1.5 py-0.5 rounded">
-                      {stage.rejections.toLocaleString()} pcs
+                      {stage.rejections.toLocaleString()} units
                     </span>
                     <span className="text-[8px] text-muted-foreground/30">
                       •
