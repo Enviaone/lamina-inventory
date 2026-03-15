@@ -80,7 +80,7 @@ export function LogCard({ entry, isAdmin, onEdit, onDelete }: LogCardProps) {
         </div>
         <div className="flex flex-col gap-1 border-l border-border/50 pl-3">
           <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
-            Input
+            Intake
           </span>
           <span className="text-xs font-semibold text-foreground">
             {entry.data.inputQty || '—'}

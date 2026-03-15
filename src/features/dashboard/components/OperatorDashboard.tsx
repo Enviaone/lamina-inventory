@@ -112,7 +112,7 @@ export function OperatorDashboard({ user }: OperatorDashboardProps) {
           icon={XCircle}
           trend={
             stats.rejections > 0
-              ? { value: `${stats.rejections} pcs`, positive: false }
+              ? { value: `${stats.rejections} units`, positive: false }
               : undefined
           }
         />

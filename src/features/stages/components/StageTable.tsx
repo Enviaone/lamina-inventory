@@ -170,7 +170,7 @@ export function StageTable({
                                   <span className="text-[10px] leading-tight flex-1">
                                     Exp.{' '}
                                     {mismatchExpected.toLocaleString('en-IN')}{' '}
-                                    pcs
+                                    units
                                   </span>
                                 </div>
                               )}
@@ -254,8 +254,6 @@ export function StageTable({
                       </div>
                     </TableCell>
 
-
-
                     {config.columns.map((col) => (
                       <TableCell key={col.key}>
                         {col.key === 'location' ? (
@@ -303,7 +301,7 @@ export function StageTable({
                             <AlertTriangle className="w-3 h-3 shrink-0" />
                             <span className="text-[10px]">
                               Expected{' '}
-                              {mismatchExpected.toLocaleString('en-IN')} pcs
+                              {mismatchExpected.toLocaleString('en-IN')} units
                               from prev. stage
                             </span>
                           </div>

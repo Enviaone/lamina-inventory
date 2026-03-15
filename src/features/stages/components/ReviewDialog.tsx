@@ -140,7 +140,7 @@ function ReviewDialogContent({
                         )}
                         {col.key !== 'location' && (
                           <span className="text-[10px] text-muted-foreground ml-1">
-                            pcs
+                            units
                           </span>
                         )}
                       </td>
@@ -151,7 +151,7 @@ function ReviewDialogContent({
                           {approved}
                         </span>
                         <span className="text-[10px] text-muted-foreground ml-1">
-                          pcs
+                          units
                         </span>
                       </td>
                     )}

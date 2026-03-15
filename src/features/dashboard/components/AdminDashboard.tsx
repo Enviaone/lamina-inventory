@@ -126,7 +126,7 @@ export function AdminDashboard() {
           icon={Activity}
           trend={
             analytics.totalRejections > 0
-              ? { value: `${analytics.totalRejections} pcs`, positive: false }
+              ? { value: `${analytics.totalRejections} units`, positive: false }
               : undefined
           }
         />
