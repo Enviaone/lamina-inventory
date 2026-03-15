@@ -66,6 +66,10 @@ export function CommandMenu() {
             <MapPin className="mr-2 h-4 w-4" />
             <span>Locations</span>
           </CommandItem>
+          <CommandItem onSelect={() => runCommand(() => navigate('/logs'))}>
+            <ClipboardList className="mr-2 h-4 w-4" />
+            <span>Logs</span>
+          </CommandItem>
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup heading="Manufacturing Stages">
@@ -80,7 +84,7 @@ export function CommandMenu() {
                 )
               }
             >
-              <ClipboardList className="mr-2 h-4 w-4" />
+              <stage.icon className="mr-2 h-4 w-4" />
               <span>{stage.label}</span>
             </CommandItem>
           ))}
